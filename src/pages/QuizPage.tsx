@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, CheckCircle2, XCircle, Clock, Zap, ArrowRight, RotateCcw, BookOpen } from "lucide-react";
-import { QUIZZES } from "../data/mockData";
 import { useApp } from "../context/AppContext";
 import type { Quiz, Question } from "../types";
 
@@ -100,7 +99,7 @@ function QuizComplete({ quiz, score, xpEarned, elapsed, onRetry, onContinue, onN
 }
 
 export default function QuizPage({ topicId, onBack, onContinueLearning, onNextChallenge }: QuizPageProps) {
-  const { addXp } = useApp();
+  const { quizzes: QUIZZES, submitQuizResult } = useApp();
   const quiz = QUIZZES.find(q => q.topicId === topicId) ?? QUIZZES[0];
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -146,7 +145,7 @@ export default function QuizPage({ topicId, onBack, onContinueLearning, onNextCh
       const bonus = Math.round((finalScore / total) * 100) === 100 ? 25 : 0;
       const totalXp = xp + bonus;
       setXpEarned(totalXp);
-      addXp(totalXp, `Completed Quiz: ${quiz.topicTitle}${bonus ? " (+25 XP perfect bonus)" : ""}`);
+      void submitQuizResult(quiz, finalScore, total, totalXp);
       setFinished(true);
     }
   };

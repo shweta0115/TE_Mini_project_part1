@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ArrowLeft, CheckCircle2, Clock, Zap, ChevronRight, BookOpen, Code2, Star } from "lucide-react";
-import { TOPICS } from "../data/mockData";
 import { useApp } from "../context/AppContext";
 
 interface TopicPageProps {
@@ -41,29 +40,36 @@ function CodeBlock({ code, output }: { code: string; output?: string }) {
 }
 
 export default function TopicPage({ topicId, onBack, onStartQuiz, onStartChallenge }: TopicPageProps) {
-  const { addXp } = useApp();
+  const { topics: TOPICS, completeTopic } = useApp();
   const topic = TOPICS.find(t => t.id === topicId) ?? TOPICS[5];
   const [activeSubtopic, setActiveSubtopic] = useState(0);
-  const [completedSubtopics, setCompletedSubtopics] = useState<Set<number>>(new Set());
-  const [topicCompleted, setTopicCompleted] = useState(false);
+  const initialCompleted = topic.status === "completed"
+    ? topic.subtopics.map((_, index) => index)
+    : topic.subtopics.slice(0, Math.floor((topic.progress / 100) * topic.subtopics.length)).map((_, index) => index);
+  const [completedSubtopics, setCompletedSubtopics] = useState<Set<number>>(new Set(initialCompleted));
 
+  const hasContent = topic.subtopics.length > 0;
   const currentSub = topic.subtopics[activeSubtopic];
-  const progress = topic.status === "completed" ? 100 :
-    topic.status === "in-progress" ? Math.round((completedSubtopics.size / Math.max(topic.subtopics.length, 1)) * 100) : 0;
+  const progress = topic.status === "completed" ? 100 : Math.round((completedSubtopics.size / Math.max(topic.subtopics.length, 1)) * 100);
 
   const handleMarkComplete = () => {
-    setCompletedSubtopics(prev => new Set([...prev, activeSubtopic]));
+    const nextCompleted = new Set([...completedSubtopics, activeSubtopic]);
+    const nextProgress = Math.round((nextCompleted.size / Math.max(topic.subtopics.length, 1)) * 100);
+    setCompletedSubtopics(nextCompleted);
+    void completeTopic(topic, Array.from(nextCompleted), nextProgress);
     if (activeSubtopic < topic.subtopics.length - 1) {
       setActiveSubtopic(prev => prev + 1);
-    } else {
-      if (!topicCompleted) {
-        setTopicCompleted(true);
-        addXp(topic.xpReward, `Completed: ${topic.title}`);
-      }
     }
   };
 
-  const allDone = completedSubtopics.size === topic.subtopics.length && topic.subtopics.length > 0;
+  // Topics without detailed content can still be completed so the next topic unlocks.
+  const handleCompleteEmptyTopic = () => {
+    void completeTopic(topic, [], 100);
+  };
+
+  const allDone = hasContent
+    ? completedSubtopics.size === topic.subtopics.length
+    : topic.status === "completed";
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-6">
@@ -169,18 +175,24 @@ export default function TopicPage({ topicId, onBack, onStartQuiz, onStartChallen
             <div className="p-8 text-center rounded-lg border border-dashed border-border">
               <BookOpen size={32} className="text-muted-foreground mx-auto mb-3" />
               <h3 className="font-semibold mb-2">Content coming soon</h3>
-              <p className="text-sm text-muted-foreground">This topic's detailed content is being prepared.</p>
+              <p className="text-sm text-muted-foreground">This topic's detailed content is being prepared. Mark it complete to keep moving.</p>
             </div>
           )}
 
           {/* Bottom Actions */}
           <div className="flex items-center justify-between pt-6 mt-6 border-t border-border">
             <div className="flex items-center gap-3">
-              {!allDone && currentSub && (
+              {!allDone && currentSub && hasContent && (
                 <button onClick={handleMarkComplete}
                   className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                   <CheckCircle2 size={14} />
                   {activeSubtopic === topic.subtopics.length - 1 ? "Complete Topic" : "Mark Complete"}
+                </button>
+              )}
+              {!allDone && !hasContent && topic.status !== "locked" && (
+                <button onClick={handleCompleteEmptyTopic}
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+                  <CheckCircle2 size={14} /> Complete Topic
                 </button>
               )}
               {allDone && (

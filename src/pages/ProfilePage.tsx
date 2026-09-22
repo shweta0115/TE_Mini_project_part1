@@ -1,11 +1,18 @@
 import { Zap, Flame, BookOpen, Star, Code2, TrendingUp, Trophy, CheckCircle2 } from "lucide-react";
-import { DEMO_USER, ACHIEVEMENTS, ACTIVITY, XP_TRANSACTIONS, ANALYTICS } from "../data/mockData";
 import { useApp } from "../context/AppContext";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
+function getInitials(name?: string, username?: string) {
+  const source = (name || username || "Learner").trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
 export default function ProfilePage() {
-  const { currentXp, getLevelInfo } = useApp();
+  const { currentXp, getLevelInfo, user, achievements: ACHIEVEMENTS, activity: ACTIVITY, analytics: ANALYTICS } = useApp();
   const levelInfo = getLevelInfo();
+  const initials = getInitials(user?.name, user?.username);
   const xpForLevel = [0, 100, 250, 500, 850, 1300, 2000, 3000, 4500, 6500][levelInfo.current - 1] ?? 0;
   const xpProgress = Math.round(((currentXp - xpForLevel) / (levelInfo.nextXp - xpForLevel)) * 100);
   const earnedAchievements = ACHIEVEMENTS.filter(a => a.earned);
@@ -15,13 +22,13 @@ export default function ProfilePage() {
       {/* Profile Hero */}
       <div className="p-6 rounded-lg border border-border bg-card mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
         <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold shrink-0">
-          SG
+          {initials}
         </div>
         <div className="flex-1">
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
-              <h1 className="text-xl font-bold">{DEMO_USER.name}</h1>
-              <p className="text-muted-foreground text-sm">@{DEMO_USER.username}</p>
+              <h1 className="text-xl font-bold">{user?.name ?? "Learner"}</h1>
+              <p className="text-muted-foreground text-sm">@{user?.username ?? "learner"}</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
@@ -30,7 +37,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20">
                 <Flame size={13} className="text-orange-500" />
-                <span className="text-sm font-semibold text-orange-600">12 days</span>
+                <span className="text-sm font-semibold text-orange-600">{user?.streak ?? 0} days</span>
               </div>
             </div>
           </div>
@@ -49,10 +56,10 @@ export default function ProfilePage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
-          { icon: BookOpen, label: "Lessons", value: DEMO_USER.stats.lessonsCompleted },
-          { icon: Star, label: "Quizzes", value: DEMO_USER.stats.quizzesCompleted },
-          { icon: Code2, label: "Challenges", value: DEMO_USER.stats.challengesCompleted },
-          { icon: TrendingUp, label: "Accuracy", value: `${DEMO_USER.stats.quizAccuracy}%` },
+          { icon: BookOpen, label: "Lessons", value: user?.stats.lessonsCompleted ?? 0 },
+          { icon: Star, label: "Quizzes", value: user?.stats.quizzesCompleted ?? 0 },
+          { icon: Code2, label: "Challenges", value: user?.stats.challengesCompleted ?? 0 },
+          { icon: TrendingUp, label: "Accuracy", value: `${user?.stats.quizAccuracy ?? 0}%` },
         ].map(s => (
           <div key={s.label} className="p-4 rounded-lg border border-border bg-card text-center">
             <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mx-auto mb-2">

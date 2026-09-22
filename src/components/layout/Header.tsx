@@ -23,12 +23,20 @@ const VIEW_LABELS: Record<string, string[]> = {
   notifications: ["Notifications"],
 };
 
+function getInitials(name?: string, username?: string) {
+  const source = (name || username || "Learner").trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
 export default function Header({ currentView, onNavigate }: HeaderProps) {
-  const { currentXp, notifications, unreadCount, markNotificationRead, markAllNotificationsRead, openSearch, logout } = useApp();
+  const { currentXp, notifications, unreadCount, markNotificationRead, markAllNotificationsRead, openSearch, logout, user } = useApp();
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const breadcrumbs = VIEW_LABELS[currentView] ?? [currentView];
+  const initials = getInitials(user?.name, user?.username);
 
   return (
     <header className="h-14 flex items-center gap-4 px-6 shrink-0 bg-background border-b border-border">
@@ -138,7 +146,7 @@ export default function Header({ currentView, onNavigate }: HeaderProps) {
           onClick={() => setUserMenuOpen(!userMenuOpen)}
           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-primary text-white shrink-0 hover:bg-primary/90 transition-colors"
         >
-          SG
+          {initials}
         </button>
         {userMenuOpen && (
           <>

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, BookOpen, Code2, Star, X, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { TOPICS, CHALLENGES, QUIZZES } from "../data/mockData";
 
 interface SearchResult {
   id: string;
@@ -16,7 +15,7 @@ interface SearchOverlayProps {
 }
 
 export default function SearchOverlay({ onNavigate }: SearchOverlayProps) {
-  const { searchOpen, closeSearch } = useApp();
+  const { searchOpen, closeSearch, topics: TOPICS, challenges: CHALLENGES, quizzes: QUIZZES } = useApp();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 

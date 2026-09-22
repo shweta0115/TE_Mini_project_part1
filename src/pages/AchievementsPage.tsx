@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Trophy, BookOpen, Code2, Star, Flame, Zap, Type, Moon, Award, RefreshCw, Target, CheckCircle2, Lock } from "lucide-react";
-import { ACHIEVEMENTS } from "../data/mockData";
+import { useApp } from "../context/AppContext";
 import type { Achievement } from "../types";
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -77,6 +77,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
 }
 
 export default function AchievementsPage() {
+  const { achievements: ACHIEVEMENTS } = useApp();
   const [tab, setTab] = useState<CategoryTab>("All");
 
   const filtered = ACHIEVEMENTS.filter(a => {

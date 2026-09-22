@@ -1,5 +1,4 @@
 import { CheckCircle2, Lock, Clock, Zap, ArrowRight, BookOpen, Play } from "lucide-react";
-import { TOPICS } from "../data/mockData";
 import type { Topic } from "../types";
 import { useApp } from "../context/AppContext";
 
@@ -90,7 +89,7 @@ function TopicRow({ topic, onOpen, userXp }: { topic: Topic; onOpen: () => void;
 }
 
 export default function LearnPage({ onOpenTopic }: LearnPageProps) {
-  const { currentXp } = useApp();
+  const { currentXp, topics: TOPICS } = useApp();
   const categories = ["beginner", "intermediate", "advanced"] as const;
   const completedCount = TOPICS.filter(t => t.status === "completed").length;
   const totalCount = TOPICS.length;

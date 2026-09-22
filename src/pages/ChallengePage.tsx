@@ -3,7 +3,6 @@ import {
   Code2, Lock, CheckCircle2, Clock, Zap, Filter,
   Search, ChevronDown
 } from "lucide-react";
-import { CHALLENGES } from "../data/mockData";
 import { useApp } from "../context/AppContext";
 import type { Challenge } from "../types";
 
@@ -85,7 +84,7 @@ function ChallengeCard({ challenge, onOpen, userXp }: { challenge: Challenge; on
 }
 
 export default function ChallengePage({ onOpenChallenge }: ChallengePageProps) {
-  const { currentXp } = useApp();
+  const { currentXp, challenges: CHALLENGES } = useApp();
   const [search, setSearch] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Sun, Moon, Monitor, Bell, Lock, User, Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { apiRequest } from "../lib/api";
 import type { ThemeMode } from "../types";
 
 const SECTIONS = ["Profile", "Account", "Password", "Notifications", "Appearance", "Privacy"] as const;
@@ -17,6 +18,13 @@ function SectionButton({ label, active, onClick }: { label: string; active: bool
   );
 }
 
+function getInitials(name?: string, username?: string) {
+  const source = (name || username || "Learner").trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
@@ -31,20 +39,32 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 }
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useApp();
+  const { theme, setTheme, user } = useApp();
   const [activeSection, setActiveSection] = useState<Section>("Profile");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  const [profile, setProfile] = useState({ name: "Shweta Gupta", username: "shweta_g", email: "shweta@example.com", bio: "Python learner and developer." });
+  const [profile, setProfile] = useState({ name: user?.name ?? "", username: user?.username ?? "", email: user?.email ?? "", bio: "Python learner and developer." });
   const [notifications, setNotifications] = useState({
     xpAlerts: true, achievementUnlocks: true, streakReminders: true, dailyChallenges: true, weeklyReport: false, leaderboardUpdates: false,
   });
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise(r => setTimeout(r, 1000));
+    try {
+      await apiRequest("/profile", {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: profile.name,
+          username: profile.username,
+          settings: notifications,
+        }),
+      });
+    } catch {
+      setSaving(false);
+      return;
+    }
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -81,7 +101,7 @@ export default function SettingsPage() {
               <div>
                 <h2 className="font-semibold mb-4">Profile Information</h2>
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold">SG</div>
+                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold">{getInitials(profile.name, profile.username)}</div>
                   <div>
                     <p className="text-sm font-medium">{profile.name}</p>
                     <p className="text-xs text-muted-foreground">@{profile.username}</p>

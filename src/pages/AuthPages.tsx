@@ -45,7 +45,7 @@ export function LoginPage({ onNavigate }: { onNavigate: (v: string) => void }) {
     setLoading(true);
     const ok = await login(email, password);
     setLoading(false);
-    if (ok) onNavigate("dashboard");
+    if (ok) onNavigate("learn");
     else setError("Invalid email or password. Try any email/password.");
   };
 
@@ -182,7 +182,7 @@ export function RegisterPage({ onNavigate }: { onNavigate: (v: string) => void }
   const [terms, setTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { register } = useApp();
+  const { register, authError } = useApp();
 
   const update = (k: keyof typeof form, v: string) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -193,10 +193,10 @@ export function RegisterPage({ onNavigate }: { onNavigate: (v: string) => void }
     if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
     if (!terms) { setError("Please accept the Terms & Conditions."); return; }
     setLoading(true);
-    const ok = await register(form.name, form.username, form.email, form.password);
+    const result = await register(form.name, form.username, form.email, form.password);
     setLoading(false);
-    if (ok) onNavigate("onboarding");
-    else setError("Registration failed. Please try again.");
+    if (result.ok) onNavigate("learn");
+    else setError(result.error || authError || "Registration failed. Please try again.");
   };
 
   return (
@@ -306,11 +306,20 @@ export function OnboardingPage({ onNavigate }: { onNavigate: (v: string) => void
   const [step, setStep] = useState(0);
   const [experience, setExperience] = useState("");
   const [goal, setGoal] = useState("");
-  const { login } = useApp();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const { completeOnboarding } = useApp();
 
   const handleFinish = async () => {
-    await login("demo@pythonquest.app", "demo");
-    onNavigate("dashboard");
+    setSaving(true);
+    setError("");
+    const ok = await completeOnboarding(experience, goal);
+    setSaving(false);
+    if (ok) {
+      onNavigate("dashboard");
+    } else {
+      setError("Could not save your learning path. Make sure the backend is running, then try again.");
+    }
   };
 
   return (
@@ -409,9 +418,10 @@ export function OnboardingPage({ onNavigate }: { onNavigate: (v: string) => void
                 <span className="font-medium text-primary">0 XP</span>
               </div>
             </div>
-            <button onClick={handleFinish}
-              className="w-full py-3 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
-              Let's Start Learning <ArrowRight size={16} />
+            {error && <p className="text-sm text-destructive mb-3">{error}</p>}
+            <button onClick={handleFinish} disabled={saving}
+              className="w-full py-3 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+              {saving ? "Saving..." : "Let's Start Learning"} {!saving && <ArrowRight size={16} />}
             </button>
           </div>
         )}

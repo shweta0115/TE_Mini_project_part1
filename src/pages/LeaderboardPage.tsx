@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Trophy, Medal, Zap, Flame } from "lucide-react";
-import { LEADERBOARD } from "../data/mockData";
+import { useApp } from "../context/AppContext";
 import type { LeaderboardEntry } from "../types";
 
 const TABS = ["Global", "Weekly", "Monthly", "Friends"] as const;
@@ -72,6 +72,7 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
 }
 
 export default function LeaderboardPage() {
+  const { leaderboard: LEADERBOARD } = useApp();
   const [activeTab, setActiveTab] = useState<Tab>("Global");
   const currentUser = LEADERBOARD.find(e => e.isCurrentUser);
 

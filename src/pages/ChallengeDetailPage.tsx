@@ -3,7 +3,6 @@ import {
   ArrowLeft, Play, Upload, RefreshCw, ChevronDown, CheckCircle2, XCircle,
   Lightbulb, Zap, Clock, Lock, Image, X, Loader2, AlertCircle
 } from "lucide-react";
-import { CHALLENGES } from "../data/mockData";
 import { useApp } from "../context/AppContext";
 import type { Challenge } from "../types";
 
@@ -269,7 +268,7 @@ function ScreenshotSubmission({ onSubmit }: { onSubmit: () => void }) {
 }
 
 export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDetailProps) {
-  const { addXp, spendXp, canAfford } = useApp();
+  const { challenges: CHALLENGES, submitChallengeResult, spendXp, canAfford } = useApp();
   const challenge = CHALLENGES.find(c => c.id === challengeId) ?? CHALLENGES[0];
   const [code, setCode] = useState(challenge.starterCode);
   const [activeTab, setActiveTab] = useState<"problem" | "hints">("problem");
@@ -289,11 +288,11 @@ export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDe
     const results = challenge.testCases.map(tc => ({ id: tc.id, passed: true }));
     setTestResults(results);
     setSubmitState("success");
-    addXp(challenge.xpReward, `Completed Challenge: ${challenge.title}`);
+    void submitChallengeResult(challenge, { code, passed: true });
   };
 
   const handleScreenshotSubmit = () => {
-    addXp(challenge.xpReward, `Completed Challenge (Screenshot): ${challenge.title}`);
+    void submitChallengeResult(challenge, { passed: true, submissionType: "screenshot" });
   };
 
   const allPassed = testResults.length > 0 && testResults.every(r => r.passed);

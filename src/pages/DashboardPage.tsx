@@ -4,7 +4,7 @@ import {
   Trophy, Target, Clock, TrendingUp, Plus, Star, Lock
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { TOPICS, ACTIVITY, DAILY_CHALLENGE, CHALLENGES, LEVELS } from "../data/mockData";
+import { LEVELS } from "../data/mockData";
 
 interface DashboardProps {
   onNavigate: (view: string) => void;
@@ -13,7 +13,23 @@ interface DashboardProps {
 }
 
 const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
-const WEEK_ACTIVE = [true, true, true, true, true, true, false];
+
+// Which days of the current (Mon-first) week have a positive-XP transaction.
+function computeWeekActive(transactions: { amount: number; createdAt: string }[]): boolean[] {
+  const active = [false, false, false, false, false, false, false];
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  for (const tx of transactions) {
+    if (tx.amount <= 0) continue;
+    const d = new Date(tx.createdAt);
+    if (d < monday) continue;
+    const idx = Math.floor((d.getTime() - monday.getTime()) / 86400000);
+    if (idx >= 0 && idx < 7) active[idx] = true;
+  }
+  return active;
+}
 
 function StatCard({ label, value, icon: Icon, trend, color = "primary" }: {
   label: string;
@@ -64,14 +80,21 @@ function ActivityIcon({ type }: { type: string }) {
 }
 
 export default function DashboardPage({ onNavigate, onOpenTopic, onOpenChallenge }: DashboardProps) {
-  const { currentXp, getLevelInfo } = useApp();
+  const {
+    currentXp, getLevelInfo, user, topics: TOPICS, challenges: CHALLENGES,
+    activity: ACTIVITY, dailyChallenge: DAILY_CHALLENGE, xpTransactions: XP_TRANSACTIONS
+  } = useApp();
   const levelInfo = getLevelInfo();
+  const weekActive = computeWeekActive(XP_TRANSACTIONS);
   const currentLevelData = LEVELS.find(l => l.level === levelInfo.current) ?? LEVELS[0];
   const xpIntoLevel = currentXp - currentLevelData.minXp;
   const xpNeeded = levelInfo.nextXp - currentLevelData.minXp;
   const xpProgress = Math.min(Math.round((xpIntoLevel / xpNeeded) * 100), 100);
 
-  const currentTopic = TOPICS.find(t => t.status === "in-progress") ?? TOPICS[5];
+  const currentTopic =
+    TOPICS.find(t => t.status === "in-progress") ??
+    TOPICS.find(t => t.status === "unlocked") ??
+    TOPICS[0];
   const unlockedChallenges = CHALLENGES.filter(c => c.status === "unlocked").slice(0, 2);
   const completedTopics = TOPICS.filter(t => t.status === "completed").length;
 
@@ -80,7 +103,7 @@ export default function DashboardPage({ onNavigate, onOpenTopic, onOpenChallenge
       {/* Welcome Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight mb-1">Welcome back, Shweta.</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">Welcome back, {user?.name ?? "Learner"}.</h1>
           <p className="text-muted-foreground text-sm">Continue your Python journey. You've completed {completedTopics} of {TOPICS.length} topics.</p>
         </div>
         <button
@@ -132,7 +155,7 @@ export default function DashboardPage({ onNavigate, onOpenTopic, onOpenChallenge
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-0.5">Learning Streak</p>
               <div className="flex items-center gap-2">
                 <Flame size={20} className="text-orange-500" />
-                <span className="text-2xl font-bold">12</span>
+                <span className="text-2xl font-bold">{user?.streak ?? 0}</span>
                 <span className="text-sm text-muted-foreground">days</span>
               </div>
             </div>
@@ -141,11 +164,11 @@ export default function DashboardPage({ onNavigate, onOpenTopic, onOpenChallenge
             {WEEK_DAYS.map((day, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
                 <div className={`w-full h-7 rounded-md flex items-center justify-center transition-colors ${
-                  WEEK_ACTIVE[i]
+                  weekActive[i]
                     ? "bg-orange-500 shadow-sm"
                     : "bg-muted"
                 }`}>
-                  {WEEK_ACTIVE[i] ? (
+                  {weekActive[i] ? (
                     <CheckCircle2 size={11} className="text-white" />
                   ) : (
                     <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
@@ -206,10 +229,10 @@ export default function DashboardPage({ onNavigate, onOpenTopic, onOpenChallenge
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Lessons Completed" value={18} icon={BookOpen} color="green" trend="+3 this week" />
-        <StatCard label="Quizzes Completed" value={35} icon={Star} color="blue" />
-        <StatCard label="Coding Challenges" value={24} icon={Code2} color="primary" trend="+5 this week" />
-        <StatCard label="Quiz Accuracy" value="91%" icon={TrendingUp} color="orange" trend="+4%" />
+        <StatCard label="Lessons Completed" value={user?.stats.lessonsCompleted ?? completedTopics} icon={BookOpen} color="green" />
+        <StatCard label="Quizzes Completed" value={user?.stats.quizzesCompleted ?? 0} icon={Star} color="blue" />
+        <StatCard label="Coding Challenges" value={user?.stats.challengesCompleted ?? 0} icon={Code2} color="primary" />
+        <StatCard label="Quiz Accuracy" value={`${user?.stats.quizAccuracy ?? 0}%`} icon={TrendingUp} color="orange" />
       </div>
 
       {/* Current Topic + Recent Activity */}

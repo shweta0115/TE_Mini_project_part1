@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar
 } from "recharts";
 import { Zap, Flame, BookOpen, Star, Code2, TrendingUp, Award, Calendar } from "lucide-react";
-import { ANALYTICS, XP_TRANSACTIONS } from "../data/mockData";
+import { useApp } from "../context/AppContext";
 
 function StatCard({ icon: Icon, label, value, sub, color = "primary" }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
@@ -47,50 +47,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-// Generate realistic heatmap data for the past 15 weeks (~105 days)
-function generateHeatmapData() {
-  const cells: { date: string; xp: number; level: 0 | 1 | 2 | 3 | 4 }[] = [];
-  const today = new Date("2024-11-23");
-  const realActive: Record<string, number> = {
-    "2024-11-11": 60, "2024-11-12": 80, "2024-11-13": 30, "2024-11-14": 120,
-    "2024-11-15": 200, "2024-11-16": 50, "2024-11-17": 70, "2024-11-18": 40,
-    "2024-11-19": 90, "2024-11-20": 125, "2024-11-21": 95, "2024-11-22": 145,
-  };
-
-  const rng = (seed: number) => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-  };
-
-  for (let i = 104; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
-    const r = rng(i * 13 + 7);
-
-    let xp = 0;
-    let level: 0 | 1 | 2 | 3 | 4 = 0;
-    if (realActive[key] !== undefined) {
-      xp = realActive[key];
-    } else if (i > 14) {
-      const prob = i < 60 ? 0.6 : 0.45;
-      if (r < prob) {
-        xp = Math.round((rng(i * 7 + 3) * 180) + 20);
-      }
-    }
-
-    if (xp === 0) level = 0;
-    else if (xp < 50) level = 1;
-    else if (xp < 100) level = 2;
-    else if (xp < 150) level = 3;
-    else level = 4;
-
-    cells.push({ date: key, xp, level });
-  }
-  return cells;
-}
-
-const HEATMAP_DATA = generateHeatmapData();
+const HEATMAP_WEEKS = 15;
+const HEATMAP_DAYS = HEATMAP_WEEKS * 7;
 const LEVEL_COLORS = [
   "bg-muted dark:bg-muted",
   "bg-primary/20",
@@ -98,26 +56,71 @@ const LEVEL_COLORS = [
   "bg-primary/65",
   "bg-primary",
 ];
-const WEEK_LABELS = ["Mon", "Wed", "Fri"];
-const MONTH_LABELS = ["Sep", "Oct", "Nov"];
+const WEEKDAY_LABELS: Record<number, string> = { 1: "Mon", 3: "Wed", 5: "Fri" };
 
-function ActivityHeatmap() {
-  const weeks: typeof HEATMAP_DATA[] = [];
-  for (let i = 0; i < HEATMAP_DATA.length; i += 7) {
-    weeks.push(HEATMAP_DATA.slice(i, i + 7));
+type HeatCell = { date: string; xp: number; future: boolean };
+
+function xpLevel(xp: number, maxXp: number): 0 | 1 | 2 | 3 | 4 {
+  if (xp <= 0) return 0;
+  if (maxXp <= 0) return 1;
+  const ratio = xp / maxXp;
+  if (ratio <= 0.25) return 1;
+  if (ratio <= 0.5) return 2;
+  if (ratio <= 0.75) return 3;
+  return 4;
+}
+
+function buildHeatmap(dailyActivity: { date: string; xp: number }[]): HeatCell[] {
+  const totals = new Map(dailyActivity.map(d => [d.date, d.xp]));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Start on the Sunday on/before (today - HEATMAP_DAYS + 1) so columns are Mon..Sun weeks.
+  const start = new Date(today);
+  start.setDate(start.getDate() - (HEATMAP_DAYS - 1));
+  const startDow = (start.getDay() + 6) % 7; // 0 = Monday
+  start.setDate(start.getDate() - startDow);
+
+  const cells: HeatCell[] = [];
+  for (let i = 0; i < HEATMAP_DAYS + 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    if (d > today) {
+      cells.push({ date: d.toISOString().slice(0, 10), xp: 0, future: true });
+    } else {
+      const key = d.toISOString().slice(0, 10);
+      cells.push({ date: key, xp: totals.get(key) ?? 0, future: false });
+    }
+  }
+  return cells;
+}
+
+function ActivityHeatmap({ dailyActivity }: { dailyActivity: { date: string; xp: number }[] }) {
+  const cells = buildHeatmap(dailyActivity);
+  const maxXp = cells.reduce((max, c) => Math.max(max, c.xp), 0);
+  const activeDays = cells.filter(c => !c.future && c.xp > 0).length;
+
+  const weeks: HeatCell[][] = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    weeks.push(cells.slice(i, i + 7));
   }
 
-  const totalActive = HEATMAP_DATA.filter(d => d.xp > 0).length;
+  // Month label per week column, shown when the week contains the 1st of a month.
+  const monthLabels = weeks.map(week => {
+    const firstOfMonth = week.find(cell => cell.date.endsWith("-01") && !cell.future);
+    if (!firstOfMonth) return "";
+    return new Date(`${firstOfMonth.date}T00:00:00`).toLocaleDateString("en", { month: "short" });
+  });
 
   return (
     <div className="p-5 rounded-lg border border-border bg-card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Calendar size={15} className="text-primary" />
           <h3 className="font-semibold text-sm">Activity Heatmap</h3>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>{totalActive} active days in the last 15 weeks</span>
+          <span>{activeDays} active day{activeDays === 1 ? "" : "s"} in the last {HEATMAP_WEEKS} weeks</span>
           <div className="flex items-center gap-1">
             <span>Less</span>
             {LEVEL_COLORS.map((c, i) => (
@@ -132,18 +135,20 @@ function ActivityHeatmap() {
         <div className="flex gap-1 min-w-max">
           {/* Day labels */}
           <div className="flex flex-col justify-around pr-1" style={{ paddingTop: "18px" }}>
-            {WEEK_LABELS.map(l => (
-              <span key={l} className="text-xs text-muted-foreground leading-none" style={{ height: "13px", lineHeight: "13px" }}>{l}</span>
+            {[0, 1, 2, 3, 4, 5, 6].map(dow => (
+              <span key={dow} className="text-xs text-muted-foreground leading-none"
+                style={{ height: "13px", lineHeight: "13px" }}>
+                {WEEKDAY_LABELS[dow] ?? ""}
+              </span>
             ))}
           </div>
           {/* Grid */}
           <div>
-            {/* Month labels */}
-            <div className="flex mb-1">
-              {MONTH_LABELS.map((m, i) => (
-                <span key={m} className="text-xs text-muted-foreground"
-                  style={{ width: `${i === 0 ? 5 : i === 1 ? 5 : 5}rem`, display: "inline-block" }}>
-                  {m}
+            {/* Month labels aligned to their week column */}
+            <div className="flex gap-1 mb-1">
+              {monthLabels.map((label, wi) => (
+                <span key={wi} className="text-xs text-muted-foreground" style={{ width: "12px" }}>
+                  {label}
                 </span>
               ))}
             </div>
@@ -152,8 +157,12 @@ function ActivityHeatmap() {
                 <div key={wi} className="flex flex-col gap-1">
                   {week.map((cell, di) => (
                     <div key={di}
-                      title={cell.xp > 0 ? `${cell.date}: ${cell.xp} XP earned` : cell.date}
-                      className={`w-3 h-3 rounded-sm cursor-default transition-opacity hover:opacity-80 ${LEVEL_COLORS[cell.level]}`}
+                      title={cell.future
+                        ? cell.date
+                        : `${cell.date}: ${cell.xp} XP earned`}
+                      className={`w-3 h-3 rounded-sm cursor-default transition-opacity hover:opacity-80 ${
+                        cell.future ? "bg-transparent" : LEVEL_COLORS[xpLevel(cell.xp, maxXp)]
+                      }`}
                     />
                   ))}
                 </div>
@@ -167,6 +176,21 @@ function ActivityHeatmap() {
 }
 
 export default function ProgressPage() {
+  const { analytics: ANALYTICS, xpTransactions: XP_TRANSACTIONS, user, currentXp, topics, challenges } = useApp();
+  const completedTopics = topics.filter(t => t.status === "completed").length;
+  const completedChallenges = challenges.filter(c => c.status === "completed").length;
+
+  // Prefer the backend's per-day activity; fall back to deriving it from XP transactions.
+  const dailyActivity = ANALYTICS.dailyActivity?.length
+    ? ANALYTICS.dailyActivity
+    : Object.entries(
+        XP_TRANSACTIONS.reduce<Record<string, number>>((acc, tx) => {
+          if (tx.amount <= 0) return acc;
+          const key = new Date(tx.createdAt).toISOString().slice(0, 10);
+          acc[key] = (acc[key] ?? 0) + tx.amount;
+          return acc;
+        }, {}),
+      ).map(([date, xp]) => ({ date, xp }));
   return (
     <div className="max-w-5xl mx-auto py-8 px-6">
       <div className="mb-8">
@@ -176,17 +200,17 @@ export default function ProgressPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-        <StatCard icon={Zap} label="Total XP" value="2,450" sub="+825 this month" color="primary" />
-        <StatCard icon={Flame} label="Current Streak" value="12 days" color="orange" />
-        <StatCard icon={BookOpen} label="Topics Done" value="5" sub="of 27 total" color="green" />
-        <StatCard icon={Star} label="Quiz Accuracy" value="91%" sub="+4% this week" color="blue" />
-        <StatCard icon={Code2} label="Challenges" value="24" sub="+5 this week" color="purple" />
-        <StatCard icon={TrendingUp} label="Hours Learned" value="47h" color="primary" />
+        <StatCard icon={Zap} label="Total XP" value={currentXp.toLocaleString()} color="primary" />
+        <StatCard icon={Flame} label="Current Streak" value={`${user?.streak ?? 0} days`} color="orange" />
+        <StatCard icon={BookOpen} label="Topics Done" value={String(completedTopics)} sub={`of ${topics.length} total`} color="green" />
+        <StatCard icon={Star} label="Quiz Accuracy" value={`${user?.stats.quizAccuracy ?? 0}%`} color="blue" />
+        <StatCard icon={Code2} label="Challenges" value={String(completedChallenges)} color="purple" />
+        <StatCard icon={TrendingUp} label="Hours Learned" value={`${user?.stats.learningHours ?? 0}h`} color="primary" />
       </div>
 
       {/* Heatmap */}
       <div className="mb-6">
-        <ActivityHeatmap />
+        <ActivityHeatmap dailyActivity={dailyActivity} />
       </div>
 
       {/* Charts Row 1 */}

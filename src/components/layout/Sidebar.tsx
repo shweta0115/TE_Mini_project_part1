@@ -31,9 +31,18 @@ interface SidebarProps {
   onNavigate: (view: string) => void;
 }
 
+function getInitials(name?: string, username?: string) {
+  const source = (name || username || "Learner").trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
 export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
-  const { sidebarCollapsed, toggleSidebar, currentXp, getLevelInfo } = useApp();
+  const { sidebarCollapsed, toggleSidebar, currentXp, getLevelInfo, user } = useApp();
   const levelInfo = getLevelInfo();
+  const initials = getInitials(user?.name, user?.username);
+  const displayName = user?.username || user?.name || "Learner";
   const xpProgress = Math.round(((currentXp - getLevelForLevel(levelInfo.current)) / (levelInfo.nextXp - getLevelForLevel(levelInfo.current))) * 100);
 
   function getLevelForLevel(level: number) {
@@ -119,7 +128,7 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
           <div className="flex justify-center py-2">
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold"
               style={{ background: "var(--sidebar-primary)", color: "white" }}>
-              SG
+              {initials}
             </div>
           </div>
         ) : (
@@ -127,11 +136,11 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
             <div className="flex items-center gap-2.5 mb-2.5">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
                 style={{ background: "var(--sidebar-primary)", color: "white" }}>
-                SG
+                {initials}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-semibold truncate" style={{ color: "var(--sidebar-accent-foreground)" }}>
-                  Shweta Gupta
+                  {displayName}
                 </p>
                 <p className="text-xs truncate" style={{ color: "var(--sidebar-foreground)", opacity: 0.6 }}>
                   {levelInfo.title}
@@ -149,7 +158,7 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
               <div className="flex items-center gap-1 ml-auto">
                 <Flame size={10} className="text-orange-400" />
                 <span className="text-xs" style={{ color: "var(--sidebar-foreground)", opacity: 0.7 }}>
-                  12d
+                  {user?.streak ?? 0}d
                 </span>
               </div>
             </div>

@@ -197,4 +197,39 @@ export interface AnalyticsData {
   challengesByDifficulty: { difficulty: string; count: number }[];
   weeklyActivity: { day: string; xp: number; lessons: number; challenges: number }[];
   topicMastery: { topic: string; mastery: number }[];
+  dailyActivity?: { date: string; xp: number }[];
+}
+
+export interface LearningState {
+  topicProgress: Record<string, {
+    topicId: string;
+    title?: string;
+    status?: TopicStatus;
+    progress?: number;
+    completedSubtopics?: number[];
+    updatedAt?: string;
+  }>;
+  quizAttempts: Record<string, {
+    quizId: string;
+    topicId?: string;
+    topicTitle?: string;
+    completed?: boolean;
+    bestScore?: number;
+    bestAccuracy?: number;
+    attempts?: number;
+    updatedAt?: string;
+  }>;
+  challengeProgress: Record<string, {
+    challengeId: string;
+    title?: string;
+    status?: ChallengeStatus;
+    attempts?: number;
+    submissionType?: string;
+    lastCode?: string;
+    updatedAt?: string;
+  }>;
+  achievementProgress: Record<string, Partial<Achievement>>;
+  activity: ActivityEntry[];
+  analytics: AnalyticsData;
+  leaderboard: LeaderboardEntry[];
 }
