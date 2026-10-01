@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, CheckCircle2, XCircle, Clock, Zap, ArrowRight, RotateCcw, BookOpen } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, Clock, Sparkles, ArrowRight, RotateCcw, BookOpen } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import type { Quiz, Question } from "../types";
 
@@ -16,8 +16,8 @@ function QuizOption({ option, index, selected, correct, revealed, onClick }: {
   const letters = ["A", "B", "C", "D"];
   let stateClass = "border-border hover:border-primary/40 hover:bg-muted/30";
   if (selected && !revealed) stateClass = "border-primary bg-primary/5";
-  if (revealed && correct) stateClass = "border-green-500 bg-green-50 dark:bg-green-900/20";
-  if (revealed && selected && !correct) stateClass = "border-red-400 bg-red-50 dark:bg-red-900/20";
+  if (revealed && correct) stateClass = "border-success bg-secondary";
+  if (revealed && selected && !correct) stateClass = "border-destructive/50 bg-destructive/10";
   if (revealed && !selected && !correct) stateClass = "border-border opacity-50";
 
   return (
@@ -27,9 +27,9 @@ function QuizOption({ option, index, selected, correct, revealed, onClick }: {
       className={`w-full text-left flex items-center gap-3 p-4 rounded-lg border transition-all ${stateClass} ${!revealed ? "cursor-pointer" : "cursor-default"}`}
     >
       <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 text-xs font-bold transition-all ${
-        selected && !revealed ? "bg-primary text-white" :
-        revealed && correct ? "bg-green-500 text-white" :
-        revealed && selected && !correct ? "bg-red-400 text-white" :
+        selected && !revealed ? "bg-primary text-primary-foreground" :
+        revealed && correct ? "bg-success text-success-foreground" :
+        revealed && selected && !correct ? "bg-destructive text-destructive-foreground" :
         "bg-muted text-muted-foreground"
       }`}>
         {revealed && correct ? <CheckCircle2 size={13} /> :
@@ -52,9 +52,9 @@ function QuizComplete({ quiz, score, xpEarned, elapsed, onRetry, onContinue, onN
   return (
     <div className="max-w-md mx-auto py-12 px-6 text-center">
       <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-        accuracy >= 80 ? "bg-green-100 dark:bg-green-900/30" : "bg-yellow-100 dark:bg-yellow-900/30"
+        accuracy >= 80 ? "bg-secondary" : "bg-muted"
       }`}>
-        {accuracy >= 80 ? <CheckCircle2 size={28} className="text-green-600" /> : <BookOpen size={28} className="text-yellow-600" />}
+        {accuracy >= 80 ? <CheckCircle2 size={28} className="text-success" /> : <BookOpen size={28} className="text-muted-foreground" />}
       </div>
 
       <h2 className="text-2xl font-bold mb-1">Quiz Completed</h2>
@@ -75,7 +75,7 @@ function QuizComplete({ quiz, score, xpEarned, elapsed, onRetry, onContinue, onN
       </div>
 
       {accuracy < 80 && (
-        <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 mb-6 text-sm text-yellow-800 dark:text-yellow-300">
+        <div className="p-3 rounded-lg bg-muted border border-border mb-6 text-sm text-muted-foreground">
           Review the questions you missed and try again to improve your score.
         </div>
       )}
@@ -86,7 +86,7 @@ function QuizComplete({ quiz, score, xpEarned, elapsed, onRetry, onContinue, onN
           <RotateCcw size={14} /> Retry Quiz
         </button>
         <button onClick={onContinue}
-          className="flex items-center justify-center gap-2 py-2.5 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors">
+          className="pq-charcoal-action flex items-center justify-center gap-2 py-2.5 rounded-md font-medium text-sm">
           Continue Learning <ArrowRight size={14} />
         </button>
         <button onClick={onNextChallenge}
@@ -185,7 +185,7 @@ export default function QuizPage({ topicId, onBack, onContinueLearning, onNextCh
             <span className="font-mono">{mins.toString().padStart(2, "0")}:{secs.toString().padStart(2, "0")}</span>
           </div>
           <div className="flex items-center gap-1.5 text-primary text-sm font-semibold">
-            <Zap size={13} />
+            <Sparkles size={13} strokeWidth={1.8} />
             +{quiz.xpReward} XP
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function QuizPage({ topicId, onBack, onContinueLearning, onNextCh
       <div className="p-5 rounded-lg border border-border bg-card mb-5">
         <p className="font-medium text-sm mb-3">{question.text}</p>
         {question.code && (
-          <pre className="p-4 rounded-md bg-[#1e1e2e] text-[#cdd6f4] text-sm font-mono overflow-x-auto">
+          <pre className="p-4 rounded-md bg-[#1b241f] text-[#f1f3ee] text-sm font-mono overflow-x-auto">
             <code>{question.code}</code>
           </pre>
         )}
@@ -237,14 +237,14 @@ export default function QuizPage({ topicId, onBack, onContinueLearning, onNextCh
       {revealed && (
         <div className={`p-4 rounded-lg border mb-5 ${
           selectedAnswer === question.correctIndex
-            ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-            : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+            ? "bg-secondary border-primary/20"
+            : "bg-destructive/10 border-destructive/20"
         }`}>
           <div className="flex items-center gap-2 mb-1">
             {selectedAnswer === question.correctIndex
-              ? <CheckCircle2 size={14} className="text-green-600" />
-              : <XCircle size={14} className="text-red-500" />}
-            <span className={`text-xs font-semibold ${selectedAnswer === question.correctIndex ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+              ? <CheckCircle2 size={14} className="text-success" />
+              : <XCircle size={14} className="text-destructive" />}
+            <span className={`text-xs font-semibold ${selectedAnswer === question.correctIndex ? "text-success" : "text-destructive"}`}>
               {selectedAnswer === question.correctIndex ? "Correct!" : "Incorrect"}
             </span>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import {
   ArrowLeft, Play, Upload, RefreshCw, ChevronDown, CheckCircle2, XCircle,
-  Lightbulb, Zap, Clock, Lock, Image, X, Loader2, AlertCircle
+  Lightbulb, Sparkles, Clock, Lock, Image, X, Loader2, AlertCircle
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import type { Challenge } from "../types";
@@ -12,10 +12,10 @@ interface ChallengeDetailProps {
 }
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  beginner: "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
-  intermediate: "text-blue-600 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
-  advanced: "text-purple-600 bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800",
-  expert: "text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
+  beginner: "text-primary bg-secondary border-primary/20",
+  intermediate: "text-foreground bg-muted border-border",
+  advanced: "text-muted-foreground bg-muted border-border",
+  expert: "text-foreground bg-muted border-border",
 };
 
 type SubmissionState = "idle" | "running" | "success" | "error";
@@ -40,7 +40,7 @@ function HintPanel({ challenge, onSpendXp, canAfford }: {
   return (
     <div>
       <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-        <Lightbulb size={14} className="text-yellow-500" /> Hints
+        <Lightbulb size={14} className="text-warning" /> Hints
       </h3>
       <div className="space-y-2">
         {challenge.hints.map((hint, i) => {
@@ -51,8 +51,8 @@ function HintPanel({ challenge, onSpendXp, canAfford }: {
           return (
             <div key={hint.id} className="rounded-lg border border-border overflow-hidden">
               {isPending ? (
-                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20">
-                  <p className="text-xs font-semibold text-yellow-800 dark:text-yellow-300 mb-2">
+                <div className="p-3 bg-warning/10">
+                  <p className="text-xs font-semibold text-foreground mb-2">
                     Reveal this hint for {hint.xpCost} XP?
                   </p>
                   <div className="flex gap-2">
@@ -61,16 +61,16 @@ function HintPanel({ challenge, onSpendXp, canAfford }: {
                       Cancel
                     </button>
                     <button onClick={() => confirmReveal(hint.id, hint.xpCost, `Used Hint ${i + 1}: ${challenge.title}`)}
-                      className="flex-1 py-1.5 rounded text-xs bg-yellow-500 text-white hover:bg-yellow-600 transition-colors font-medium">
+                      className="flex-1 py-1.5 rounded text-xs bg-warning text-foreground hover:bg-warning/90 transition-colors font-medium">
                       Reveal Hint (-{hint.xpCost} XP)
                     </button>
                   </div>
                 </div>
               ) : isRevealed ? (
-                <div className="p-3 bg-yellow-50/50 dark:bg-yellow-900/10">
+                <div className="p-3 bg-warning/5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Lightbulb size={11} className="text-yellow-500" />
-                    <span className="text-xs font-semibold text-yellow-700 dark:text-yellow-400">Hint {i + 1}</span>
+                    <Lightbulb size={11} className="text-warning" />
+                    <span className="text-xs font-semibold text-foreground">Hint {i + 1}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{hint.text}</p>
                 </div>
@@ -85,11 +85,11 @@ function HintPanel({ challenge, onSpendXp, canAfford }: {
                     disabled={!affordable}
                     className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                       affordable
-                        ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50"
+                        ? "bg-warning/10 text-foreground hover:bg-warning/20"
                         : "bg-muted text-muted-foreground cursor-not-allowed"
                     }`}
                   >
-                    <Zap size={10} />
+                    <Sparkles size={10} strokeWidth={1.8} />
                     {hint.xpCost} XP
                   </button>
                 </div>
@@ -116,11 +116,11 @@ function CodeEditor({ code, onChange }: { code: string; onChange: (v: string) =>
       </div>
 
       {/* Code Area */}
-      <div className="flex-1 overflow-hidden flex bg-[#1e1e2e]">
+      <div className="flex-1 overflow-hidden flex bg-[#111814]">
         {/* Line numbers */}
-        <div className="py-4 px-3 text-right select-none shrink-0 bg-[#181825]">
+        <div className="py-4 px-3 text-right select-none shrink-0 bg-[#1b241f]">
           {code.split("\n").map((_, i) => (
-            <div key={i} className="text-xs leading-6 font-mono" style={{ color: "#585b70" }}>
+            <div key={i} className="text-xs leading-6 font-mono" style={{ color: "#68736d" }}>
               {i + 1}
             </div>
           ))}
@@ -129,7 +129,7 @@ function CodeEditor({ code, onChange }: { code: string; onChange: (v: string) =>
           value={code}
           onChange={e => onChange(e.target.value)}
           className="flex-1 py-4 px-4 text-sm font-mono leading-6 resize-none outline-none bg-transparent"
-          style={{ color: "#cdd6f4", caretColor: "#cdd6f4" }}
+          style={{ color: "#f1f3ee", caretColor: "#f1f3ee" }}
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
@@ -174,13 +174,13 @@ function ScreenshotSubmission({ onSubmit }: { onSubmit: () => void }) {
   if (state === "done" && result === "pass") {
     return (
       <div className="p-6 text-center">
-        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-3">
-          <CheckCircle2 size={22} className="text-green-600" />
+        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3">
+          <CheckCircle2 size={22} className="text-success" />
         </div>
         <h3 className="font-semibold mb-1">Challenge Completed!</h3>
         <p className="text-sm text-muted-foreground mb-3">Your solution has been verified successfully.</p>
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold">
-          <Zap size={13} /> XP Earned
+          <Sparkles size={13} strokeWidth={1.8} /> XP Earned
         </div>
         <p className="text-xs text-muted-foreground mt-4 italic">
           Note: Screenshot analysis is simulated. Future backend will use OCR + Python execution.
@@ -203,7 +203,7 @@ function ScreenshotSubmission({ onSubmit }: { onSubmit: () => void }) {
           <div className="space-y-2 text-left max-w-xs mx-auto">
             {["Code detected", "Syntax verified", "Test cases evaluated"].map((step) => (
               <div key={step} className="flex items-center gap-2 text-xs">
-                <CheckCircle2 size={12} className="text-green-500" />
+                <CheckCircle2 size={12} className="text-success" />
                 <span>{step}</span>
               </div>
             ))}
@@ -250,10 +250,10 @@ function ScreenshotSubmission({ onSubmit }: { onSubmit: () => void }) {
       <input ref={inputRef} type="file" accept="image/*" className="hidden"
         onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
 
-      <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 mb-4">
+      <div className="p-3 rounded-lg bg-secondary border border-primary/15 mb-4">
         <div className="flex items-start gap-2">
-          <AlertCircle size={13} className="text-blue-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-blue-700 dark:text-blue-400">
+          <AlertCircle size={13} className="text-primary shrink-0 mt-0.5" />
+          <p className="text-xs text-foreground">
             Screenshot analysis is a frontend demonstration. A future backend will use OCR to extract and evaluate your code.
           </p>
         </div>
@@ -320,7 +320,7 @@ export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDe
             <Clock size={12} />{challenge.estimatedMinutes} min
           </div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
-            <Zap size={12} />+{challenge.xpReward} XP
+            <Sparkles size={12} strokeWidth={1.8} />+{challenge.xpReward} XP
           </div>
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDe
                 <div className="shrink-0 p-3 rounded-lg border border-border bg-card">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-semibold">Test Results</p>
-                    <span className={`text-xs font-semibold ${allPassed ? "text-green-600" : "text-muted-foreground"}`}>
+                    <span className={`text-xs font-semibold ${allPassed ? "text-success" : "text-muted-foreground"}`}>
                       {passedCount} / {testResults.length} Passed
                     </span>
                   </div>
@@ -455,12 +455,12 @@ export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDe
                     {testResults.map((r, i) => (
                       <div key={r.id} className="flex items-center gap-2">
                         {r.passed ? (
-                          <CheckCircle2 size={13} className="text-green-500 shrink-0" />
+                          <CheckCircle2 size={13} className="text-success shrink-0" />
                         ) : (
-                          <XCircle size={13} className="text-red-500 shrink-0" />
+                          <XCircle size={13} className="text-destructive shrink-0" />
                         )}
                         <span className="text-xs text-muted-foreground">Test Case {i + 1}</span>
-                        <span className={`ml-auto text-xs font-medium ${r.passed ? "text-green-600" : "text-red-500"}`}>
+                        <span className={`ml-auto text-xs font-medium ${r.passed ? "text-success" : "text-destructive"}`}>
                           {r.passed ? "Passed" : "Failed"}
                         </span>
                       </div>
@@ -468,8 +468,8 @@ export default function ChallengeDetailPage({ challengeId, onBack }: ChallengeDe
                   </div>
                   {submitState === "success" && (
                     <div className="mt-3 pt-3 border-t border-border flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-green-500" />
-                      <span className="text-xs font-semibold text-green-600">All tests passed! +{challenge.xpReward} XP earned.</span>
+                      <CheckCircle2 size={14} className="text-success" />
+                      <span className="text-xs font-semibold text-success">All tests passed! +{challenge.xpReward} XP earned.</span>
                     </div>
                   )}
                 </div>

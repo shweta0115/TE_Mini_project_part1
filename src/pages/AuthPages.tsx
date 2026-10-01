@@ -10,10 +10,10 @@ interface AuthPagesProps {
 function PasswordStrength({ password }: { password: string }) {
   const getStrength = () => {
     if (password.length === 0) return { score: 0, label: "", color: "" };
-    if (password.length < 6) return { score: 1, label: "Weak", color: "bg-red-500" };
+    if (password.length < 6) return { score: 1, label: "Weak", color: "bg-destructive" };
     if (password.length < 10 || !/[A-Z]/.test(password) || !/[0-9]/.test(password))
-      return { score: 2, label: "Medium", color: "bg-yellow-500" };
-    return { score: 3, label: "Strong", color: "bg-green-500" };
+      return { score: 2, label: "Medium", color: "bg-primary" };
+    return { score: 3, label: "Strong", color: "bg-success" };
   };
   const { score, label, color } = getStrength();
   if (!password) return null;
@@ -52,9 +52,9 @@ export function LoginPage({ onNavigate }: { onNavigate: (v: string) => void }) {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Left Panel */}
-      <div className="hidden lg:flex flex-col w-1/2 bg-primary p-12 text-white">
+      <div className="hidden lg:flex flex-col w-1/2 bg-sidebar p-12 text-sidebar-accent-foreground">
         <div className="flex items-center gap-2 mb-auto">
-          <div className="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-sidebar-accent flex items-center justify-center">
             <span className="font-bold text-sm">P</span>
           </div>
           <span className="font-semibold">PythonQuest</span>
@@ -63,7 +63,7 @@ export function LoginPage({ onNavigate }: { onNavigate: (v: string) => void }) {
           <h1 className="text-3xl font-bold mb-4 leading-tight">
             Learn Python.<br />Build Skills.<br />Level Up.
           </h1>
-          <p className="text-white/70 leading-relaxed mb-8">
+          <p className="text-sidebar-accent-foreground/75 leading-relaxed mb-8">
             Master Python through structured learning, real coding challenges, and a progression system designed to keep you engaged.
           </p>
           <div className="space-y-3">
@@ -74,18 +74,18 @@ export function LoginPage({ onNavigate }: { onNavigate: (v: string) => void }) {
               "Achievements, streaks, and leaderboards",
             ].map(item => (
               <div key={item} className="flex items-center gap-2.5">
-                <CheckCircle2 size={15} className="text-white/70 shrink-0" />
-                <span className="text-sm text-white/80">{item}</span>
+                <CheckCircle2 size={15} className="text-sidebar-accent-foreground/70 shrink-0" />
+                <span className="text-sm text-sidebar-accent-foreground/85">{item}</span>
               </div>
             ))}
           </div>
         </div>
         <div className="mt-auto pt-12">
-          <div className="p-4 rounded-xl bg-white/10 border border-white/20">
-            <p className="text-sm text-white/80 italic mb-2">
+          <div className="p-4 rounded-xl bg-sidebar-accent/70 border border-sidebar-border">
+            <p className="text-sm text-sidebar-accent-foreground/85 italic mb-2">
               "PythonQuest gave me the structure I needed. The gamification actually kept me motivated through the hard topics."
             </p>
-            <p className="text-xs text-white/60">— Alex Chen, Python Pro · Level 9</p>
+            <p className="text-xs text-sidebar-foreground">— Alex Chen, Python Pro · Level 9</p>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function LoginPage({ onNavigate }: { onNavigate: (v: string) => void }) {
         <div className="w-full max-w-sm">
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
+              <span className="text-primary-foreground font-bold text-sm">P</span>
             </div>
             <span className="font-semibold">PythonQuest</span>
           </div>
@@ -201,16 +201,16 @@ export function RegisterPage({ onNavigate }: { onNavigate: (v: string) => void }
 
   return (
     <div className="min-h-screen flex bg-background">
-      <div className="hidden lg:flex flex-col w-1/2 bg-primary p-12 text-white">
+      <div className="hidden lg:flex flex-col w-1/2 bg-sidebar p-12 text-sidebar-accent-foreground">
         <div className="flex items-center gap-2 mb-auto">
-          <div className="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-sidebar-accent flex items-center justify-center">
             <span className="font-bold text-sm">P</span>
           </div>
           <span className="font-semibold">PythonQuest</span>
         </div>
         <div className="my-auto">
           <h2 className="text-3xl font-bold mb-4">Begin your Python journey today.</h2>
-          <p className="text-white/70 leading-relaxed">Create your free account and start earning XP from your very first lesson.</p>
+          <p className="text-sidebar-accent-foreground/75 leading-relaxed">Create your free account and start earning XP from your very first lesson.</p>
         </div>
       </div>
 
@@ -327,7 +327,7 @@ export function OnboardingPage({ onNavigate }: { onNavigate: (v: string) => void
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold">P</span>
+            <span className="text-primary-foreground font-bold">P</span>
           </div>
           <div className="flex items-center justify-center gap-2 mb-6">
             {[0, 1, 2].map(i => (
@@ -392,8 +392,8 @@ export function OnboardingPage({ onNavigate }: { onNavigate: (v: string) => void
 
         {step === 2 && (
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 size={28} className="text-green-500" />
+            <div className="w-16 h-16 rounded-full bg-secondary border border-primary/20 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 size={28} className="text-success" />
             </div>
             <h2 className="text-xl font-bold mb-2">You're all set!</h2>
             <p className="text-muted-foreground text-sm mb-2">

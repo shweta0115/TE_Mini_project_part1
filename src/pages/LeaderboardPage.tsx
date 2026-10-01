@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trophy, Medal, Zap, Flame } from "lucide-react";
+import { Trophy, Medal, Sparkles, Flame } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import type { LeaderboardEntry } from "../types";
 
@@ -7,9 +7,9 @@ const TABS = ["Global", "Weekly", "Monthly", "Friends"] as const;
 type Tab = typeof TABS[number];
 
 function RankBadge({ rank }: { rank: number }) {
-  if (rank === 1) return <div className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center"><Trophy size={14} className="text-yellow-900" /></div>;
-  if (rank === 2) return <div className="w-7 h-7 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center"><Medal size={14} className="text-slate-600 dark:text-slate-200" /></div>;
-  if (rank === 3) return <div className="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center"><Medal size={14} className="text-amber-100" /></div>;
+  if (rank === 1) return <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center"><Trophy size={14} className="text-primary-foreground" /></div>;
+  if (rank === 2) return <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center"><Medal size={14} className="text-foreground" /></div>;
+  if (rank === 3) return <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center"><Medal size={14} className="text-primary" /></div>;
   return <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center"><span className="text-xs font-bold text-muted-foreground">{rank}</span></div>;
 }
 
@@ -43,7 +43,7 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
       <div className="hidden sm:flex items-center gap-6 text-right">
         <div>
           <div className="flex items-center gap-1 justify-end">
-            <Zap size={11} className="text-primary" />
+            <Sparkles size={11} strokeWidth={1.8} className="text-warning" />
             <span className="font-semibold text-sm">{entry.xp.toLocaleString()}</span>
           </div>
           <p className="text-xs text-muted-foreground">XP</p>
@@ -58,7 +58,7 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
         </div>
         <div>
           <div className="flex items-center gap-1 justify-end">
-            <Flame size={11} className="text-orange-500" />
+            <Flame size={11} className="text-primary" />
             <span className="font-semibold text-sm">{entry.streak}d</span>
           </div>
           <p className="text-xs text-muted-foreground">Streak</p>
@@ -80,7 +80,7 @@ export default function LeaderboardPage() {
     <div className="max-w-4xl mx-auto py-8 px-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">Leaderboard</h1>
+        <h1 className="pq-page-heading text-2xl font-bold mb-1">Leaderboard</h1>
         <p className="text-muted-foreground text-sm">See how you rank against other Python learners.</p>
       </div>
 

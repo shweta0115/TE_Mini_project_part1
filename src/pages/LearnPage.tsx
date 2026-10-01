@@ -1,4 +1,4 @@
-import { CheckCircle2, Lock, Clock, Zap, ArrowRight, BookOpen, Play } from "lucide-react";
+import { CheckCircle2, Lock, Clock, Sparkles, ArrowRight, BookOpen, Play } from "lucide-react";
 import type { Topic } from "../types";
 import { useApp } from "../context/AppContext";
 
@@ -7,9 +7,9 @@ interface LearnPageProps {
 }
 
 const CATEGORY_LABELS = {
-  beginner: { label: "Beginner", color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/20", border: "border-green-200 dark:border-green-800" },
-  intermediate: { label: "Intermediate", color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-200 dark:border-blue-800" },
-  advanced: { label: "Advanced", color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-900/20", border: "border-purple-200 dark:border-purple-800" },
+  beginner: { label: "Beginner", color: "text-primary", bg: "bg-secondary", border: "border-primary/20" },
+  intermediate: { label: "Intermediate", color: "text-foreground", bg: "bg-muted", border: "border-border" },
+  advanced: { label: "Advanced", color: "text-foreground", bg: "bg-muted", border: "border-border" },
 };
 
 function TopicRow({ topic, onOpen, userXp }: { topic: Topic; onOpen: () => void; userXp: number }) {
@@ -19,21 +19,21 @@ function TopicRow({ topic, onOpen, userXp }: { topic: Topic; onOpen: () => void;
   return (
     <div
       onClick={() => !isLocked && onOpen()}
-      className={`flex items-center gap-4 p-4 rounded-lg border transition-all ${
-        isLocked ? "border-border opacity-60 cursor-not-allowed" :
-        isCompleted ? "border-border hover:border-green-300 cursor-pointer group" :
-        "border-border hover:border-primary/40 hover:bg-muted/20 cursor-pointer group"
+      className={`flex items-center gap-4 px-1 py-4 transition-colors ${
+        isLocked ? "opacity-55 cursor-not-allowed" :
+        isCompleted ? "cursor-pointer group" :
+        "cursor-pointer group"
       }`}
     >
       {/* Status indicator */}
       <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-        isCompleted ? "bg-green-500" :
+        isCompleted ? "bg-success" :
         isInProgress ? "bg-primary" :
         isLocked ? "bg-muted border-2 border-muted" :
         "bg-muted border-2 border-primary/30"
       }`}>
-        {isCompleted && <CheckCircle2 size={14} className="text-white" />}
-        {isInProgress && <Play size={12} className="text-white" />}
+        {isCompleted && <CheckCircle2 size={14} className="text-success-foreground" />}
+        {isInProgress && <Play size={12} className="text-primary-foreground" />}
         {isLocked && <Lock size={12} className="text-muted-foreground" />}
         {topic.status === "unlocked" && <span className="text-xs font-bold text-primary">{topic.order}</span>}
       </div>
@@ -46,7 +46,7 @@ function TopicRow({ topic, onOpen, userXp }: { topic: Topic; onOpen: () => void;
             {topic.title}
           </h3>
           {isInProgress && (
-            <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary shrink-0">
+            <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-green-pale text-primary shrink-0">
               In Progress
             </span>
           )}
@@ -76,8 +76,8 @@ function TopicRow({ topic, onOpen, userXp }: { topic: Topic; onOpen: () => void;
           <Clock size={11} />
           {topic.estimatedMinutes} min
         </div>
-        <div className="flex items-center gap-1 text-xs font-medium text-primary">
-          <Zap size={11} />
+          <div className="flex items-center gap-1 text-xs font-medium text-warning">
+          <Sparkles size={11} strokeWidth={1.8} />
           +{topic.xpReward}
         </div>
         {!isLocked && (
@@ -100,7 +100,7 @@ export default function LearnPage({ onOpenTopic }: LearnPageProps) {
       <div className="mb-8">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Python Learning Path</h1>
+            <h1 className="pq-page-heading text-2xl font-bold mb-1">Python Learning Path</h1>
             <p className="text-muted-foreground text-sm">Progress from Python fundamentals to advanced development.</p>
           </div>
           <div className="text-right">
@@ -110,7 +110,7 @@ export default function LearnPage({ onOpenTopic }: LearnPageProps) {
         </div>
 
         {/* Overall progress */}
-        <div className="p-4 rounded-lg border border-border bg-card">
+        <div className="course-progress-summary">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <BookOpen size={14} className="text-primary" />
@@ -148,7 +148,7 @@ export default function LearnPage({ onOpenTopic }: LearnPageProps) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="course-topic-list divide-y divide-border border-y border-border">
               {topics.map(topic => (
                 <TopicRow
                   key={topic.id}

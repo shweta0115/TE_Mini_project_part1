@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   LayoutDashboard, BookOpen, Code2, BarChart3, Trophy, Star,
-  User, Settings, ChevronLeft, ChevronRight, Flame, Zap, Lock
+  User, Settings, ChevronLeft, ChevronRight, Flame, Sparkles, Lock
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
@@ -58,14 +58,15 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
       style={{ background: "var(--sidebar)", borderRight: "1px solid var(--sidebar-border)" }}
     >
       {/* Brand */}
-      <div className="flex items-center h-14 px-4 shrink-0" style={{ borderBottom: "1px solid var(--sidebar-border)" }}>
+      <div className={`flex items-center h-14 px-2 shrink-0 ${sidebarCollapsed ? "justify-center" : "justify-between"}`}
+        style={{ borderBottom: "1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent)" }}>
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
+          <div className="w-[26px] h-[26px] rounded-md flex items-center justify-center shrink-0"
             style={{ background: "var(--sidebar-primary)" }}>
-            <span className="text-white font-bold text-sm">P</span>
+            <span className="text-sidebar-primary-foreground font-semibold text-[13px]">P</span>
           </div>
           {!sidebarCollapsed && (
-            <span className="font-semibold text-sm tracking-tight truncate"
+            <span className="font-semibold text-[14px] tracking-[-0.025em] truncate"
               style={{ color: "var(--sidebar-accent-foreground)" }}>
               PythonQuest
             </span>
@@ -73,23 +74,23 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
         </div>
         <button
           onClick={toggleSidebar}
-          className="ml-auto p-1 rounded-md transition-colors hover:opacity-80 shrink-0"
+          className="p-1 rounded-md transition-colors hover:bg-white/[0.04] hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--sidebar-ring)] shrink-0"
           style={{ color: "var(--sidebar-foreground)" }}
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {sidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          {sidebarCollapsed ? <ChevronRight size={14} strokeWidth={1.8} /> : <ChevronLeft size={14} strokeWidth={1.8} />}
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2">
+      <nav className="flex-1 overflow-y-auto py-5 px-2">
         {!sidebarCollapsed && (
-          <p className="text-xs font-semibold uppercase tracking-widest px-2 mb-2"
-            style={{ color: "var(--sidebar-foreground)", opacity: 0.4 }}>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.13em] px-2.5 mb-2.5"
+            style={{ color: "var(--sidebar-foreground)", opacity: 0.62 }}>
             Workspace
           </p>
         )}
-        <ul className="space-y-0.5">
+        <ul className="space-y-1">
           {WORKSPACE_NAV.map(item => (
             <NavLink
               key={item.view}
@@ -101,15 +102,15 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
           ))}
         </ul>
 
-        <div className="my-4" style={{ borderTop: "1px solid var(--sidebar-border)" }} />
+        <div className="my-5 mx-2" style={{ borderTop: "1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent)" }} />
 
         {!sidebarCollapsed && (
-          <p className="text-xs font-semibold uppercase tracking-widest px-2 mb-2"
-            style={{ color: "var(--sidebar-foreground)", opacity: 0.4 }}>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.13em] px-2.5 mb-2.5"
+            style={{ color: "var(--sidebar-foreground)", opacity: 0.62 }}>
             Account
           </p>
         )}
-        <ul className="space-y-0.5">
+        <ul className="space-y-1">
           {ACCOUNT_NAV.map(item => (
             <NavLink
               key={item.view}
@@ -123,54 +124,56 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
       </nav>
 
       {/* User Info */}
-      <div className="shrink-0 p-2" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
+      <div className="shrink-0 p-2" style={{ borderTop: "1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent)" }}>
         {sidebarCollapsed ? (
           <div className="flex justify-center py-2">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold"
-              style={{ background: "var(--sidebar-primary)", color: "white" }}>
+            <div title={`${displayName} · Level ${levelInfo.current}`} className="w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-semibold"
+              style={{ background: "var(--sidebar-primary)", color: "var(--sidebar-primary-foreground)" }}>
               {initials}
             </div>
           </div>
         ) : (
-          <div className="rounded-lg p-2.5" style={{ background: "var(--sidebar-accent)" }}>
-            <div className="flex items-center gap-2.5 mb-2.5">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-                style={{ background: "var(--sidebar-primary)", color: "white" }}>
+          <div className="rounded-[10px] p-3" style={{ background: "var(--sidebar-accent)" }}>
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-[10px] flex items-center justify-center text-xs font-semibold shrink-0"
+                style={{ background: "var(--sidebar-primary)", color: "var(--sidebar-primary-foreground)" }}>
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold truncate" style={{ color: "var(--sidebar-accent-foreground)" }}>
+                <p className="text-[12px] font-semibold tracking-[-0.01em] truncate" style={{ color: "var(--sidebar-accent-foreground)" }}>
                   {displayName}
                 </p>
-                <p className="text-xs truncate" style={{ color: "var(--sidebar-foreground)", opacity: 0.6 }}>
+                <p className="text-[11px] mt-0.5 truncate" style={{ color: "var(--sidebar-foreground)", opacity: 0.78 }}>
                   {levelInfo.title}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="flex items-center gap-1">
-                <Zap size={10} style={{ color: "var(--sidebar-primary)" }} />
-                <span className="text-xs font-semibold" style={{ color: "var(--sidebar-accent-foreground)" }}>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[11px] font-semibold tracking-wide" style={{ color: "var(--sidebar-accent-foreground)" }}>
+                Level {levelInfo.current}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Sparkles size={11} strokeWidth={1.8} style={{ color: "var(--warning)" }} />
+                <span className="text-[11px] font-semibold tabular-nums" style={{ color: "var(--sidebar-accent-foreground)" }}>
                   {currentXp.toLocaleString()} XP
                 </span>
-              </div>
-              <div className="flex items-center gap-1 ml-auto">
-                <Flame size={10} className="text-orange-400" />
-                <span className="text-xs" style={{ color: "var(--sidebar-foreground)", opacity: 0.7 }}>
+                <span className="mx-0.5 h-3 w-px" style={{ background: "color-mix(in srgb, var(--sidebar-foreground) 22%, transparent)" }} />
+                <Flame size={11} style={{ color: "var(--sidebar-primary)" }} />
+                <span className="text-[11px] tabular-nums" style={{ color: "var(--sidebar-foreground)", opacity: 0.8 }}>
                   {user?.streak ?? 0}d
                 </span>
               </div>
             </div>
 
-            <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: "var(--sidebar-border)" }}>
+            <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--sidebar-foreground) 16%, transparent)" }}>
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(xpProgress, 100)}%`, background: "var(--sidebar-primary)" }}
               />
             </div>
-            <p className="text-xs mt-1" style={{ color: "var(--sidebar-foreground)", opacity: 0.5 }}>
-              Level {levelInfo.current} → {levelInfo.nextXp.toLocaleString()} XP
+            <p className="text-[10px] mt-2" style={{ color: "var(--sidebar-foreground)", opacity: 0.78 }}>
+              {levelInfo.nextXp.toLocaleString()} XP to next level
             </p>
           </div>
         )}
@@ -187,19 +190,27 @@ function NavLink({ item, active, collapsed, onNavigate }: {
     <li>
       <button
         onClick={() => !item.locked && onNavigate(item.view)}
-        className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-all duration-150 group ${
+        className={`w-full min-h-10 flex items-center gap-3 px-2.5 py-2 rounded-[9px] text-[13px] transition-colors duration-150 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--sidebar-ring)] ${
           item.locked ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
         } ${collapsed ? "justify-center" : ""}`}
         style={{
-          background: active ? "var(--sidebar-accent)" : "transparent",
+          background: active ? "color-mix(in srgb, var(--sidebar-primary) 12%, var(--sidebar))" : "transparent",
           color: active ? "var(--sidebar-accent-foreground)" : "var(--sidebar-foreground)",
+          boxShadow: active && !collapsed ? "inset 2px 0 0 var(--sidebar-primary)" : undefined,
+        }}
+        onMouseEnter={event => {
+          if (!active && !item.locked) event.currentTarget.style.background = "color-mix(in srgb, var(--sidebar-primary) 6%, var(--sidebar))";
+        }}
+        onMouseLeave={event => {
+          if (!active) event.currentTarget.style.background = "transparent";
         }}
         title={collapsed ? item.label : undefined}
         disabled={item.locked}
       >
         <Icon
-          size={16}
-          className={`shrink-0 transition-colors ${active ? "" : "opacity-60 group-hover:opacity-100"}`}
+          size={20}
+          strokeWidth={1.8}
+          className={`shrink-0 transition-opacity ${active ? "" : "opacity-70 group-hover:opacity-100"}`}
         />
         {!collapsed && (
           <span className="font-medium truncate flex-1 text-left">{item.label}</span>

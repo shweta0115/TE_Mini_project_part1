@@ -3,7 +3,7 @@ import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar
 } from "recharts";
-import { Zap, Flame, BookOpen, Star, Code2, TrendingUp, Award, Calendar } from "lucide-react";
+import { Sparkles, Flame, BookOpen, Star, Code2, TrendingUp, Award, Calendar } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 function StatCard({ icon: Icon, label, value, sub, color = "primary" }: {
@@ -11,23 +11,23 @@ function StatCard({ icon: Icon, label, value, sub, color = "primary" }: {
   label: string;
   value: string;
   sub?: string;
-  color?: "primary" | "orange" | "blue" | "green" | "purple";
+  color?: "primary" | "amber" | "green" | "neutral" | "teal";
 }) {
   const colorMap = {
-    primary: "text-primary bg-primary/10",
-    orange: "text-orange-500 bg-orange-100 dark:bg-orange-900/30",
-    blue: "text-blue-500 bg-blue-100 dark:bg-blue-900/30",
-    green: "text-green-600 bg-green-100 dark:bg-green-900/30",
-    purple: "text-purple-500 bg-purple-100 dark:bg-purple-900/30",
+    primary: "text-primary bg-secondary",
+    amber: "text-warning bg-warning/10",
+    green: "text-primary bg-secondary",
+    neutral: "text-foreground bg-muted",
+    teal: "text-teal bg-green-pale",
   };
   return (
-    <div className="p-4 rounded-lg border border-border bg-card">
-      <div className={`w-8 h-8 rounded-md flex items-center justify-center mb-3 ${colorMap[color]}`}>
-        <Icon size={15} />
+    <div className="analytics-stat">
+      <div className={`analytics-stat__icon ${colorMap[color]}`}>
+        <Icon size={16} strokeWidth={1.8} />
       </div>
-      <p className="text-2xl font-bold tracking-tight">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      {sub && <p className="text-xs text-green-600 font-medium mt-0.5">{sub}</p>}
+      <p className="analytics-stat__value">{value}</p>
+      <p className="analytics-stat__label">{label}</p>
+      {sub && <p className="analytics-stat__sub">{sub}</p>}
     </div>
   );
 }
@@ -194,17 +194,17 @@ export default function ProgressPage() {
   return (
     <div className="max-w-5xl mx-auto py-8 px-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-1">Progress Analytics</h1>
+        <h1 className="pq-page-heading text-2xl font-bold mb-1">Progress Analytics</h1>
         <p className="text-muted-foreground text-sm">Track your learning journey and identify areas for growth.</p>
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-        <StatCard icon={Zap} label="Total XP" value={currentXp.toLocaleString()} color="primary" />
-        <StatCard icon={Flame} label="Current Streak" value={`${user?.streak ?? 0} days`} color="orange" />
+      <div className="analytics-stats-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-6">
+        <StatCard icon={Sparkles} label="Total XP" value={currentXp.toLocaleString()} color="amber" />
+        <StatCard icon={Flame} label="Current Streak" value={`${user?.streak ?? 0} days`} color="amber" />
         <StatCard icon={BookOpen} label="Topics Done" value={String(completedTopics)} sub={`of ${topics.length} total`} color="green" />
-        <StatCard icon={Star} label="Quiz Accuracy" value={`${user?.stats.quizAccuracy ?? 0}%`} color="blue" />
-        <StatCard icon={Code2} label="Challenges" value={String(completedChallenges)} color="purple" />
+        <StatCard icon={Star} label="Quiz Accuracy" value={`${user?.stats.quizAccuracy ?? 0}%`} color="teal" />
+        <StatCard icon={Code2} label="Challenges" value={String(completedChallenges)} color="neutral" />
         <StatCard icon={TrendingUp} label="Hours Learned" value={`${user?.stats.learningHours ?? 0}h`} color="primary" />
       </div>
 
@@ -298,15 +298,15 @@ export default function ProgressPage() {
           <Award size={15} className="text-primary" />
           <h3 className="font-semibold text-sm">Learning Insights</h3>
         </div>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="learning-insights-list">
           {[
             "Your strongest topic is Conditional Statements with 97% quiz accuracy.",
             "Quiz accuracy improved by 12% compared to last month.",
             "You completed 5 challenges this week — your best week yet!",
           ].map((insight, i) => (
-            <div key={i} className="flex gap-3 p-3.5 rounded-lg bg-primary/4 border border-primary/10">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-              <p className="text-xs text-muted-foreground leading-relaxed">{insight}</p>
+            <div key={i} className="learning-insight-row">
+              <div className="learning-insight-row__mark" />
+              <p>{insight}</p>
             </div>
           ))}
         </div>
@@ -321,15 +321,15 @@ export default function ProgressPage() {
               <div className="flex items-center gap-3">
                 <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${
                   tx.type === "earned"
-                    ? "bg-green-100 dark:bg-green-900/30"
-                    : "bg-red-100 dark:bg-red-900/30"
+                    ? "bg-warning/10"
+                    : "bg-muted"
                 }`}>
-                  <Zap size={12} className={tx.type === "earned" ? "text-green-600" : "text-red-500"} />
+                  <Sparkles size={12} strokeWidth={1.8} className="text-warning" />
                 </div>
                 <span className="text-sm">{tx.description}</span>
               </div>
               <div className="text-right shrink-0">
-                <p className={`text-sm font-semibold ${tx.type === "earned" ? "text-green-600" : "text-red-500"}`}>
+                <p className="text-sm font-semibold text-foreground">
                   {tx.type === "earned" ? "+" : ""}{tx.amount} XP
                 </p>
                 <p className="text-xs text-muted-foreground">

@@ -31,7 +31,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       onClick={() => onChange(!checked)}
       className={`relative w-9 h-5 rounded-full transition-colors ${checked ? "bg-primary" : "bg-muted"}`}
     >
-      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
+      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-card shadow transition-transform ${
         checked ? "translate-x-4" : "translate-x-0.5"
       }`} />
     </button>
@@ -101,7 +101,7 @@ export default function SettingsPage() {
               <div>
                 <h2 className="font-semibold mb-4">Profile Information</h2>
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold">{getInitials(profile.name, profile.username)}</div>
+                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-lg font-bold">{getInitials(profile.name, profile.username)}</div>
                   <div>
                     <p className="text-sm font-medium">{profile.name}</p>
                     <p className="text-xs text-muted-foreground">@{profile.username}</p>

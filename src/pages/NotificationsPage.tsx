@@ -1,11 +1,11 @@
 import React from "react";
-import { Bell, Zap, Trophy, Flame, Code2, Lock, CheckCheck, Clock } from "lucide-react";
+import { Bell, Sparkles, Trophy, Flame, Code2, Lock, CheckCheck, Clock } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { formatDistanceToNow } from "date-fns";
 import type { Notification } from "../types";
 
 const TYPE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  xp: Zap,
+  xp: Sparkles,
   achievement: Trophy,
   streak: Flame,
   challenge: Code2,
@@ -14,11 +14,11 @@ const TYPE_ICONS: Record<string, React.ComponentType<{ size?: number; className?
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  xp: "text-primary bg-primary/10",
-  achievement: "text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30",
-  streak: "text-orange-600 bg-orange-100 dark:bg-orange-900/30",
-  challenge: "text-blue-600 bg-blue-100 dark:bg-blue-900/30",
-  unlock: "text-green-600 bg-green-100 dark:bg-green-900/30",
+  xp: "text-warning bg-warning/10",
+  achievement: "text-primary bg-secondary",
+  streak: "text-primary bg-green-soft",
+  challenge: "text-foreground bg-muted",
+  unlock: "text-primary bg-secondary",
   system: "text-muted-foreground bg-muted",
 };
 

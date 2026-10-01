@@ -1,4 +1,4 @@
-import { Zap, Flame, BookOpen, Star, Code2, TrendingUp, Trophy, CheckCircle2 } from "lucide-react";
+import { Sparkles, Flame, BookOpen, Star, Code2, TrendingUp, Trophy, CheckCircle2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
@@ -21,7 +21,7 @@ export default function ProfilePage() {
     <div className="max-w-4xl mx-auto py-8 px-6">
       {/* Profile Hero */}
       <div className="p-6 rounded-lg border border-border bg-card mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold shrink-0">
+        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold shrink-0">
           {initials}
         </div>
         <div className="flex-1">
@@ -31,13 +31,13 @@ export default function ProfilePage() {
               <p className="text-muted-foreground text-sm">@{user?.username ?? "learner"}</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                <Zap size={13} className="text-primary" />
-                <span className="text-sm font-semibold text-primary">{currentXp.toLocaleString()} XP</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-warning/10 border border-warning/20">
+                <Sparkles size={13} strokeWidth={1.8} className="text-warning" />
+                <span className="text-sm font-semibold text-foreground">{currentXp.toLocaleString()} XP</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20">
-                <Flame size={13} className="text-orange-500" />
-                <span className="text-sm font-semibold text-orange-600">{user?.streak ?? 0} days</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-soft border border-primary/15">
+                <Flame size={13} className="text-primary" />
+                <span className="text-sm font-semibold text-foreground">{user?.streak ?? 0} days</span>
               </div>
             </div>
           </div>
@@ -54,19 +54,16 @@ export default function ProfilePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="profile-stats-row grid grid-cols-2 md:grid-cols-4 mb-6">
         {[
           { icon: BookOpen, label: "Lessons", value: user?.stats.lessonsCompleted ?? 0 },
           { icon: Star, label: "Quizzes", value: user?.stats.quizzesCompleted ?? 0 },
           { icon: Code2, label: "Challenges", value: user?.stats.challengesCompleted ?? 0 },
           { icon: TrendingUp, label: "Accuracy", value: `${user?.stats.quizAccuracy ?? 0}%` },
         ].map(s => (
-          <div key={s.label} className="p-4 rounded-lg border border-border bg-card text-center">
-            <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mx-auto mb-2">
-              <s.icon size={15} className="text-primary" />
-            </div>
-            <p className="text-xl font-bold">{s.value}</p>
-            <p className="text-xs text-muted-foreground">{s.label}</p>
+          <div key={s.label} className="profile-stat">
+            <div className="profile-stat__label"><s.icon size={15} strokeWidth={1.8} /><span>{s.label}</span></div>
+            <p>{s.value}</p>
           </div>
         ))}
       </div>
@@ -80,15 +77,15 @@ export default function ProfilePage() {
               <div key={act.id} className="flex items-start gap-3">
                 <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5 ${
                   act.type === "challenge" ? "bg-primary/10" :
-                  act.type === "quiz" ? "bg-blue-500/10" :
-                  act.type === "achievement" ? "bg-yellow-500/10" :
-                  act.type === "unlock" ? "bg-green-500/10" : "bg-muted"
+                  act.type === "quiz" ? "bg-muted" :
+                  act.type === "achievement" ? "bg-secondary" :
+                  act.type === "unlock" ? "bg-secondary" : "bg-muted"
                 }`}>
                   {act.type === "challenge" && <Code2 size={11} className="text-primary" />}
-                  {act.type === "quiz" && <Star size={11} className="text-blue-500" />}
-                  {act.type === "achievement" && <Trophy size={11} className="text-yellow-500" />}
-                  {act.type === "lesson" && <BookOpen size={11} className="text-green-500" />}
-                  {act.type === "unlock" && <CheckCircle2 size={11} className="text-green-500" />}
+                  {act.type === "quiz" && <Star size={11} className="text-foreground" />}
+                  {act.type === "achievement" && <Trophy size={11} className="text-primary" />}
+                  {act.type === "lesson" && <BookOpen size={11} className="text-primary" />}
+                  {act.type === "unlock" && <CheckCircle2 size={11} className="text-primary" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium">{act.title}</p>
@@ -97,7 +94,7 @@ export default function ProfilePage() {
                   </p>
                 </div>
                 {act.xp && (
-                  <span className="text-xs font-semibold text-primary shrink-0">+{act.xp} XP</span>
+                  <span className="text-xs font-semibold text-warning shrink-0">+{act.xp} XP</span>
                 )}
               </div>
             ))}
@@ -139,7 +136,7 @@ export default function ProfilePage() {
                 cursor={{ fill: "var(--muted)", opacity: 0.5 }}
                 contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", fontSize: "12px" }}
               />
-              <Bar dataKey="xp" name="XP" fill="#4338ca" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="xp" name="XP" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

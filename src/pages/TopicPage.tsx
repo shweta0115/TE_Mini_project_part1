@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, CheckCircle2, Clock, Zap, ChevronRight, BookOpen, Code2, Star } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, Sparkles, ChevronRight, BookOpen, Code2, Star } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 interface TopicPageProps {
@@ -15,14 +15,14 @@ function CodeBlock({ code, output }: { code: string; output?: string }) {
       <div className="flex items-center justify-between px-4 py-2 bg-muted/50 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+            <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/35" />
+            <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/55" />
+            <div className="w-2.5 h-2.5 rounded-full bg-primary" />
           </div>
           <span className="text-xs text-muted-foreground font-mono">python</span>
         </div>
       </div>
-      <pre className="p-4 text-sm overflow-x-auto bg-[#1e1e2e] text-[#cdd6f4]">
+      <pre className="p-4 text-sm overflow-x-auto bg-[#1b241f] text-[#f1f3ee]">
         <code>{code}</code>
       </pre>
       {output && (
@@ -93,7 +93,7 @@ export default function TopicPage({ topicId, onBack, onStartQuiz, onStartChallen
               </div>
               <div className="space-y-1 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1.5"><Clock size={11} />{topic.estimatedMinutes} min</div>
-                <div className="flex items-center gap-1.5 text-primary font-medium"><Zap size={11} />+{topic.xpReward} XP</div>
+                <div className="flex items-center gap-1.5 text-warning font-medium"><Sparkles size={11} strokeWidth={1.8} />+{topic.xpReward} XP</div>
               </div>
             </div>
 
@@ -110,12 +110,12 @@ export default function TopicPage({ topicId, onBack, onStartQuiz, onStartChallen
                     }`}
                   >
                     <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
-                      completedSubtopics.has(i) ? "bg-green-500" : activeSubtopic === i ? "bg-primary" : "bg-muted"
+                      completedSubtopics.has(i) ? "bg-success" : activeSubtopic === i ? "bg-primary" : "bg-muted"
                     }`}>
                       {completedSubtopics.has(i) ? (
-                        <CheckCircle2 size={9} className="text-white" />
+                        <CheckCircle2 size={9} className="text-success-foreground" />
                       ) : (
-                        <span className="text-xs font-bold text-white">{i + 1}</span>
+                        <span className="text-xs font-bold text-foreground">{i + 1}</span>
                       )}
                     </div>
                     <span className="truncate">{sub.title}</span>
@@ -139,11 +139,11 @@ export default function TopicPage({ topicId, onBack, onStartQuiz, onStartChallen
           </div>
 
           {allDone && (
-            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-6 flex items-center gap-3">
-              <CheckCircle2 size={18} className="text-green-600 shrink-0" />
+            <div className="p-4 rounded-lg bg-secondary border border-primary/20 mb-6 flex items-center gap-3">
+              <CheckCircle2 size={18} className="text-success shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-green-800 dark:text-green-300">Topic Completed!</p>
-                <p className="text-xs text-green-700 dark:text-green-400">You earned +{topic.xpReward} XP. Ready for the quiz?</p>
+                <p className="text-sm font-semibold text-foreground">Topic Completed!</p>
+                <p className="text-xs text-muted-foreground">You earned +{topic.xpReward} XP. Ready for the quiz?</p>
               </div>
             </div>
           )}

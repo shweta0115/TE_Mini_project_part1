@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Code2, Lock, CheckCircle2, Clock, Zap, Filter,
+  Code2, Lock, CheckCircle2, Clock, Filter, Sparkles,
   Search, ChevronDown
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
@@ -11,10 +11,10 @@ interface ChallengePageProps {
 }
 
 const DIFFICULTY_COLORS: Record<string, { text: string; bg: string; border: string }> = {
-  beginner: { text: "text-green-700 dark:text-green-400", bg: "bg-green-50 dark:bg-green-900/30", border: "border-green-200 dark:border-green-800" },
-  intermediate: { text: "text-blue-700 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/30", border: "border-blue-200 dark:border-blue-800" },
-  advanced: { text: "text-purple-700 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-900/30", border: "border-purple-200 dark:border-purple-800" },
-  expert: { text: "text-red-700 dark:text-red-400", bg: "bg-red-50 dark:bg-red-900/30", border: "border-red-200 dark:border-red-800" },
+  beginner: { text: "text-primary dark:text-primary", bg: "bg-secondary dark:bg-secondary", border: "border-primary/20 dark:border-primary/30" },
+  intermediate: { text: "text-foreground dark:text-foreground", bg: "bg-muted dark:bg-muted", border: "border-border dark:border-border" },
+  advanced: { text: "text-muted-foreground", bg: "bg-muted", border: "border-border" },
+  expert: { text: "text-foreground", bg: "bg-muted", border: "border-border" },
 };
 
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
@@ -35,13 +35,13 @@ function ChallengeCard({ challenge, onOpen, userXp }: { challenge: Challenge; on
       onClick={() => !isLocked && onOpen()}
       className={`relative flex flex-col p-5 rounded-lg border transition-all ${
         isLocked ? "border-border opacity-60 cursor-not-allowed" :
-        isCompleted ? "border-green-200 dark:border-green-800 cursor-pointer hover:shadow-sm" :
+        isCompleted ? "border-success/25 dark:border-success/30 cursor-pointer hover:shadow-sm" :
         "border-border cursor-pointer hover:border-primary/40 hover:shadow-sm group"
       }`}
     >
       {isCompleted && (
         <div className="absolute top-3 right-3">
-          <CheckCircle2 size={16} className="text-green-500" />
+          <CheckCircle2 size={16} className="text-success" />
         </div>
       )}
       {isLocked && (
@@ -67,8 +67,8 @@ function ChallengeCard({ challenge, onOpen, userXp }: { challenge: Challenge; on
 
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
-          <Zap size={11} className="text-primary" />
-          <span className="font-medium text-primary">+{challenge.xpReward} XP</span>
+          <Sparkles size={11} strokeWidth={1.8} className="text-warning" />
+          <span className="font-medium text-warning">+{challenge.xpReward} XP</span>
         </div>
         <div className="flex items-center gap-1">
           <Clock size={11} />
@@ -112,7 +112,7 @@ export default function ChallengePage({ onOpenChallenge }: ChallengePageProps) {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-1">Coding Challenges</h1>
+          <h1 className="pq-page-heading text-2xl font-bold mb-1">Coding Challenges</h1>
           <p className="text-muted-foreground text-sm">Practice Python with structured coding problems.</p>
         </div>
         <div className="flex items-center gap-4 text-sm">
@@ -129,16 +129,16 @@ export default function ChallengePage({ onOpenChallenge }: ChallengePageProps) {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-4 gap-3 mb-6">
+      <div className="challenge-levels-overview mb-6">
         {[
           { label: "Beginner", count: CHALLENGES.filter(c => c.difficulty === "beginner").length, completed: CHALLENGES.filter(c => c.difficulty === "beginner" && c.status === "completed").length },
           { label: "Intermediate", count: CHALLENGES.filter(c => c.difficulty === "intermediate").length, completed: CHALLENGES.filter(c => c.difficulty === "intermediate" && c.status === "completed").length },
           { label: "Advanced", count: CHALLENGES.filter(c => c.difficulty === "advanced").length, completed: 0 },
           { label: "Expert", count: CHALLENGES.filter(c => c.difficulty === "expert").length, completed: 0 },
         ].map(s => (
-          <div key={s.label} className="p-3 rounded-lg border border-border bg-card text-center">
-            <p className="text-lg font-bold">{s.completed}<span className="text-muted-foreground font-normal text-sm">/{s.count}</span></p>
-            <p className="text-xs text-muted-foreground">{s.label}</p>
+          <div key={s.label} className="challenge-level-stat">
+            <p className="challenge-level-stat__value">{s.completed}<span>/{s.count}</span></p>
+            <p className="challenge-level-stat__label">{s.label}</p>
           </div>
         ))}
       </div>
@@ -171,7 +171,7 @@ export default function ChallengePage({ onOpenChallenge }: ChallengePageProps) {
               {["all", "beginner", "intermediate", "advanced", "expert"].map(d => (
                 <button key={d} onClick={() => setDifficultyFilter(d)}
                   className={`px-2.5 py-1 rounded text-xs font-medium capitalize transition-colors ${
-                    difficultyFilter === d ? "bg-primary text-white" : "bg-background border border-border hover:bg-muted"
+                    difficultyFilter === d ? "bg-primary text-primary-foreground" : "bg-background border border-border hover:bg-muted"
                   }`}>
                   {d === "all" ? "All" : d}
                 </button>
@@ -189,7 +189,7 @@ export default function ChallengePage({ onOpenChallenge }: ChallengePageProps) {
               ].map(s => (
                 <button key={s.key} onClick={() => setStatusFilter(s.key)}
                   className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                    statusFilter === s.key ? "bg-primary text-white" : "bg-background border border-border hover:bg-muted"
+                    statusFilter === s.key ? "bg-primary text-primary-foreground" : "bg-background border border-border hover:bg-muted"
                   }`}>
                   {s.label}
                 </button>

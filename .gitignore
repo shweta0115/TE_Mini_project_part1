@@ -19,18 +19,39 @@ out/
 *~
 .DS_Store
 
-# Environment variables
+# Environment variables and secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!**/.env.example
+
+# Python environments and caches
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # Logs
 logs/
 *.log
 
-# Django local runtime
-backend/db.sqlite3
-backend/**/__pycache__/
+# Local SQLite databases
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Django collected static files and local uploads
+backend/staticfiles/
+backend/media/
 
 # OS
 .DS_Store

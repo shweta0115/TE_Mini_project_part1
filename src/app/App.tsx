@@ -86,16 +86,18 @@ function AppShell() {
   if (!isAuthenticated) {
     if (view === "login" || view === "register" || view === "onboarding") {
       return (
-        <AuthPages
-          mode={view as "login" | "register" | "onboarding"}
-          onNavigate={navigate}
-        />
+        <div className={`app-scene app-scene--${view}`}>
+          <AuthPages
+            mode={view as "login" | "register" | "onboarding"}
+            onNavigate={navigate}
+          />
+        </div>
       );
     }
     if (view !== "landing") {
-      return <Unauthorized onBack={() => setView("login")} />;
+      return <div className="app-scene app-scene--minimal"><Unauthorized onBack={() => setView("login")} /></div>;
     }
-    return <LandingPage onNavigate={navigate} />;
+    return <div className="app-scene app-scene--landing"><LandingPage onNavigate={navigate} /></div>;
   }
 
   // Authenticated: show app shell
@@ -114,7 +116,7 @@ function AppShell() {
         <Header currentView={view} onNavigate={navigate} />
 
         {/* Page Content */}
-        <main className={`flex-1 overflow-auto ${isChallengeDetail ? "overflow-hidden" : ""}`}>
+        <main className={`app-scene app-scene--${view} flex-1 overflow-auto ${isChallengeDetail ? "overflow-hidden" : ""}`}>
           {view === "dashboard" && (
             <DashboardPage
               onNavigate={navigate}

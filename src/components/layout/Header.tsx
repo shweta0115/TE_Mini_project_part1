@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Bell, Zap, ChevronRight, X, CheckCheck, Clock, LogOut, User, Settings } from "lucide-react";
+import { Search, Bell, Sparkles, ChevronRight, X, CheckCheck, Clock, LogOut, User, Settings } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { formatDistanceToNow } from "date-fns";
 
@@ -39,7 +39,7 @@ export default function Header({ currentView, onNavigate }: HeaderProps) {
   const initials = getInitials(user?.name, user?.username);
 
   return (
-    <header className="h-14 flex items-center gap-4 px-6 shrink-0 bg-background border-b border-border">
+    <header className="h-14 flex items-center gap-4 px-5 shrink-0 bg-background border-b border-border">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-1.5 flex-1 min-w-0" aria-label="Breadcrumb">
         {breadcrumbs.map((crumb, i) => (
@@ -61,30 +61,30 @@ export default function Header({ currentView, onNavigate }: HeaderProps) {
       {/* Search */}
       <button
         onClick={openSearch}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-muted-foreground text-sm hover:border-primary/40 hover:text-foreground transition-colors"
+        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-card text-muted-foreground text-sm hover:border-primary/35 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring transition-colors"
         aria-label="Open search (Ctrl+K)"
       >
         <Search size={13} />
         <span className="text-xs">Search anything...</span>
-        <kbd className="ml-4 text-xs px-1.5 py-0.5 rounded border border-border font-mono">⌘K</kbd>
+        <kbd className="ml-4 text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted/60 font-mono">Ctrl K</kbd>
       </button>
 
       {/* XP Balance */}
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/8 border border-primary/15">
-        <Zap size={13} className="text-primary" />
-        <span className="text-xs font-semibold text-primary">{currentXp.toLocaleString()} XP</span>
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-warning/10 border border-warning/20">
+        <Sparkles size={13} strokeWidth={1.8} className="text-warning" />
+        <span className="text-xs font-semibold text-foreground">{currentXp.toLocaleString()} XP</span>
       </div>
 
       {/* Notifications */}
       <div className="relative">
         <button
           onClick={() => setNotifOpen(!notifOpen)}
-          className="relative w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted transition-colors"
+          className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-transparent hover:border-border hover:bg-muted/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring transition-colors"
           aria-label="Notifications"
         >
           <Bell size={16} className="text-muted-foreground" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center leading-none">
+            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center leading-none">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
@@ -144,7 +144,8 @@ export default function Header({ currentView, onNavigate }: HeaderProps) {
       <div className="relative">
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-primary text-white shrink-0 hover:bg-primary/90 transition-colors"
+          className="w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-semibold bg-primary text-primary-foreground shrink-0 hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring transition-colors"
+          aria-label="Open account menu"
         >
           {initials}
         </button>

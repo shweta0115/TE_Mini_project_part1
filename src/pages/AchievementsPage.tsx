@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Trophy, BookOpen, Code2, Star, Flame, Zap, Type, Moon, Award, RefreshCw, Target, CheckCircle2, Lock } from "lucide-react";
+import { Trophy, BookOpen, Code2, Star, Flame, Sparkles, Zap, Type, Moon, Award, RefreshCw, Target, CheckCircle2, Lock } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import type { Achievement } from "../types";
+import "../styles/achievements.css";
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   BookOpen, Code2, Trophy, Flame, Zap, Star, Type, Moon, Award, RefreshCw, Target,
@@ -15,64 +16,54 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
   const pct = Math.min(Math.round((achievement.progress / achievement.total) * 100), 100);
 
   return (
-    <div className={`flex gap-4 p-4 rounded-lg border transition-all ${
-      achievement.earned
-        ? "border-primary/20 bg-primary/3"
-        : "border-border hover:border-primary/20"
-    }`}>
-      <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-        achievement.earned
-          ? "bg-primary/15 border border-primary/20"
-          : "bg-muted border border-border"
-      }`}>
-        {achievement.earned ? (
-          <Icon size={20} className="text-primary" />
-        ) : (
-          <Icon size={20} className="text-muted-foreground" />
-        )}
+    <article className={`achievement-card ${achievement.earned ? "is-earned" : "is-locked"}`}>
+      <div className="achievement-card__icon" aria-hidden="true">
+        <Icon size={19} strokeWidth={1.8} />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <div>
-            <h3 className={`font-semibold text-sm ${achievement.earned ? "text-foreground" : "text-muted-foreground"}`}>
-              {achievement.title}
-            </h3>
-            <p className="text-xs text-muted-foreground">{achievement.description}</p>
+      <div className="achievement-card__content">
+        <div className="achievement-card__topline">
+          <div className="achievement-card__heading">
+            <h3>{achievement.title}</h3>
+            <p>{achievement.description}</p>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {achievement.earned ? (
-              <span className="flex items-center gap-1 text-xs font-medium text-primary">
-                <Zap size={10} />+{achievement.xpReward} XP
-              </span>
-            ) : (
-              <Lock size={12} className="text-muted-foreground" />
-            )}
-          </div>
+          <span className="achievement-xp" title={`${achievement.xpReward} experience points`}>
+            <Sparkles size={12} strokeWidth={1.8} aria-hidden="true" />
+            +{achievement.xpReward} XP
+          </span>
         </div>
 
-        <p className="text-xs text-muted-foreground mb-2">{achievement.requirement}</p>
+        <p className="achievement-requirement">{achievement.requirement}</p>
 
-        {!achievement.earned && (
-          <div>
-            <div className="flex items-center justify-between mb-1 text-xs text-muted-foreground">
-              <span>{achievement.progress} / {achievement.total}</span>
-              <span>{pct}%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-              <div className="h-full bg-primary/50 rounded-full transition-all" style={{ width: `${pct}%` }} />
-            </div>
+        {achievement.earned ? (
+          <div className="achievement-status achievement-status--earned">
+            <CheckCircle2 size={14} strokeWidth={2} aria-hidden="true" />
+            <span>
+              {achievement.earnedAt
+                ? `Earned ${new Date(achievement.earnedAt).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" })}`
+                : "Earned"}
+            </span>
           </div>
-        )}
-
-        {achievement.earned && achievement.earnedAt && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CheckCircle2 size={11} className="text-green-500" />
-            <span>Earned {new Date(achievement.earnedAt).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" })}</span>
+        ) : (
+          <div className="achievement-progress">
+            <div className="achievement-progress__meta">
+              <span><Lock size={12} aria-hidden="true" /> In progress</span>
+              <span>{achievement.progress} / {achievement.total} <b>{pct}%</b></span>
+            </div>
+            <div
+              className="achievement-progress__track"
+              role="progressbar"
+              aria-label={`${achievement.title} progress`}
+              aria-valuemin={0}
+              aria-valuemax={achievement.total}
+              aria-valuenow={Math.min(achievement.progress, achievement.total)}
+            >
+              <div className="achievement-progress__fill" style={{ width: `${pct}%` }} />
+            </div>
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -88,81 +79,86 @@ export default function AchievementsPage() {
   const earned = ACHIEVEMENTS.filter(a => a.earned).length;
   const total = ACHIEVEMENTS.length;
 
+  const earnedAchievements = filtered.filter(a => a.earned);
+  const inProgressAchievements = filtered.filter(a => !a.earned);
+  const progressPercent = total ? Math.round((earned / total) * 100) : 0;
+
   return (
-    <div className="max-w-3xl mx-auto py-8 px-6">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+    <div className="achievements-page">
+      <div className="achievements-page__header">
         <div>
-          <h1 className="text-2xl font-bold mb-1">Achievements</h1>
-          <p className="text-muted-foreground text-sm">Track your milestones and unlock achievement badges.</p>
+          <p className="achievements-eyebrow">Your learning journey</p>
+          <h1 className="pq-page-heading">Achievements</h1>
+          <p className="achievements-page__intro">A record of the skills, habits, and milestones you’ve built.</p>
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold">{earned}<span className="text-muted-foreground text-lg font-normal">/{total}</span></p>
-          <p className="text-xs text-muted-foreground">achievements earned</p>
-        </div>
-      </div>
-
-      {/* Progress */}
-      <div className="p-4 rounded-lg border border-border bg-card mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Overall Progress</span>
-          <span className="text-sm font-semibold">{Math.round((earned / total) * 100)}%</span>
-        </div>
-        <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-          <div className="h-full bg-primary rounded-full transition-all"
-            style={{ width: `${Math.round((earned / total) * 100)}%` }} />
-        </div>
-        <div className="flex items-center justify-between mt-1.5 text-xs text-muted-foreground">
-          <span>{earned} earned</span>
-          <span>{total - earned} remaining</span>
+        <div className="achievement-summary" aria-label={`${earned} of ${total} achievements earned`}>
+          <span className="achievement-summary__value">{earned}<span>/{total}</span></span>
+          <span className="achievement-summary__label">achievements earned</span>
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 mb-5">
-        {CATEGORY_TABS.map(t => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              tab === t
-                ? "bg-primary text-white"
-                : "border border-border hover:bg-muted text-muted-foreground"
-            }`}>
-            {t}
-            {t !== "All" && (
-              <span className="ml-1.5 opacity-60">
-                ({ACHIEVEMENTS.filter(a => a.category === t.toLowerCase()).length})
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Achievements list: earned first */}
-      <div className="space-y-3">
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <CheckCircle2 size={11} className="text-green-500" /> Earned
-          </p>
-          <div className="space-y-2">
-            {filtered.filter(a => a.earned).map(a => (
-              <AchievementCard key={a.id} achievement={a} />
-            ))}
-          </div>
-        </div>
-
-        {filtered.filter(a => !a.earned).length > 0 && (
-          <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5 mt-4">
-              <Lock size={11} /> In Progress
-            </p>
-            <div className="space-y-2">
-              {filtered.filter(a => !a.earned).map(a => (
-                <AchievementCard key={a.id} achievement={a} />
-              ))}
+      <section className="overall-progress" aria-labelledby="overall-progress-title">
+        <div className="overall-progress__top">
+          <div className="overall-progress__title">
+            <div className="overall-progress__mark"><Trophy size={17} strokeWidth={1.8} /></div>
+            <div>
+              <h2 id="overall-progress-title">Overall progress</h2>
+              <p>{earned} of {total} achievements earned so far.</p>
             </div>
           </div>
-        )}
+          <span className="overall-progress__percent">{progressPercent}%</span>
+        </div>
+        <div className="overall-progress__track" role="progressbar" aria-label="Overall achievements progress" aria-valuemin={0} aria-valuemax={total} aria-valuenow={earned}>
+          <div className="overall-progress__fill" style={{ width: `${progressPercent}%` }} />
+        </div>
+        <div className="overall-progress__footer">
+          <span><CheckCircle2 size={13} aria-hidden="true" /> {earned} earned</span>
+          <span>{total - earned} remaining</span>
+        </div>
+      </section>
+
+      <div className="achievement-filters" role="group" aria-label="Filter achievements by category">
+        {CATEGORY_TABS.map(t => {
+          const count = t === "All" ? total : ACHIEVEMENTS.filter(a => a.category === t.toLowerCase()).length;
+          return (
+            <button key={t} type="button" aria-pressed={tab === t} onClick={() => setTab(t)}>
+              {t}<span>{count}</span>
+            </button>
+          );
+        })}
       </div>
+
+      <section className="achievement-group" aria-labelledby="earned-heading">
+        <div className="achievement-group__heading">
+          <div className="achievement-group__label">
+            <CheckCircle2 size={15} strokeWidth={1.9} aria-hidden="true" />
+            <h2 id="earned-heading">Earned</h2>
+          </div>
+          <span>{earnedAchievements.length}</span>
+        </div>
+        {earnedAchievements.length > 0 ? (
+          <div className="achievement-grid">
+            {earnedAchievements.map(a => <AchievementCard key={a.id} achievement={a} />)}
+          </div>
+        ) : (
+          <p className="achievement-empty">No achievements earned in this category yet.</p>
+        )}
+      </section>
+
+      {inProgressAchievements.length > 0 && (
+        <section className="achievement-group achievement-group--in-progress" aria-labelledby="in-progress-heading">
+          <div className="achievement-group__heading">
+            <div className="achievement-group__label">
+              <Lock size={14} strokeWidth={1.9} aria-hidden="true" />
+              <h2 id="in-progress-heading">In progress</h2>
+            </div>
+            <span>{inProgressAchievements.length}</span>
+          </div>
+          <div className="achievement-grid">
+            {inProgressAchievements.map(a => <AchievementCard key={a.id} achievement={a} />)}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
