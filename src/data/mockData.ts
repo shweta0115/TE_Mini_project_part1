@@ -188,6 +188,466 @@ export const QUIZZES: Quiz[] = [
       { id: "qq8", text: "Which method converts a string to uppercase?", options: [".toUpper()", ".uppercase()", ".upper()", ".toUpperCase()"], correctIndex: 2, explanation: "Python's str.upper() method returns a copy of the string with all characters converted to uppercase." },
     ],
   },
+{
+    id: "q4", topicId: "t12", topicTitle: "Functions and Return Values", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq9", text: "What is returned when a Python function reaches the end without a return statement?", options: ["0", "False", "None", "An error"], correctIndex: 2, explanation: "A function without an explicit return value returns None." },
+      { id: "qq10", text: "What does the default parameter do in this function?", code: "def greet(name, prefix='Hi'):\n    return f'{prefix}, {name}'", options: ["Makes name optional", "Uses prefix when no second argument is passed", "Always ignores prefix", "Returns a tuple"], correctIndex: 1, explanation: "The default value 'Hi' is used when the caller does not supply prefix." },
+      { id: "qq11", text: "Which statement correctly calls a function named area with width 5 and height 3?", options: ["area = (5, 3)", "call area(5, 3)", "area(5, 3)", "function area 5, 3"], correctIndex: 2, explanation: "Call a function by writing its name followed by parentheses and arguments." },
+      { id: "qq12", text: "Which is the main benefit of using a function?", options: ["It makes every program run faster", "It allows code reuse and clearer structure", "It removes the need for variables", "It prevents all exceptions"], correctIndex: 1, explanation: "Functions help split a program into reusable, understandable units." },
+    ],
+  },
+  {
+    id: "q5", topicId: "t11", topicTitle: "Dictionaries and Sets", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq13", text: "What is printed by this code?", code: "profile = {'city': 'Pune'}\nprint('age' in profile)", options: ["True", "False", "None", "KeyError"], correctIndex: 1, explanation: "The in operator checks whether a key exists; 'age' is not a key in profile." },
+      { id: "qq14", text: "Which collection automatically removes duplicate values?", options: ["list", "tuple", "set", "dict values"], correctIndex: 2, explanation: "A set contains unique elements." },
+      { id: "qq15", text: "What does dict.get('score', 0) return if score is not a key?", options: ["Raises KeyError", "Returns 0", "Returns an empty list", "Adds score automatically"], correctIndex: 1, explanation: "get() returns the provided default when the key is missing." },
+      { id: "qq16", text: "Which operation finds values common to two sets?", options: ["Union", "Intersection", "Difference", "Append"], correctIndex: 1, explanation: "Intersection returns elements shared by both sets." },
+    ],
+  },
+{
+    id: "q6", topicId: "t8", topicTitle: "Lists", difficulty: "beginner", xpReward: 50,
+    timeLimit: 600, completed: false,
+    questions: [
+      { id: "qq17", text: "What is the output?", code: "nums = [10, 20, 30]\nprint(nums[1])", options: ["10", "20", "30", "1"], correctIndex: 1, explanation: "List indexing starts at zero, so index 1 contains 20." },
+      { id: "qq18", text: "Which method adds an item to the end of a list?", options: ["add()", "append()", "insertEnd()", "push()"], correctIndex: 1, explanation: "append() adds one item to the end of a list." },
+      { id: "qq19", text: "What does nums[-1] access?", options: ["The first item", "The second item", "The last item", "An invalid index"], correctIndex: 2, explanation: "Negative index -1 refers to the last list element." },
+
+      {
+        id: "qq63",
+        text: "What is the output of this code?",
+        code: "numbers = [10, 20, 30, 40]\nprint(numbers[1:3])",
+        options: ["[10, 20]", "[20, 30]", "[20, 30, 40]", "[10, 20, 30]"],
+        correctIndex: 1,
+        explanation: "List slicing includes the starting index but excludes the ending index. numbers[1:3] returns the elements at indices 1 and 2: 20 and 30."
+      },
+      {
+        id: "qq64",
+        text: "What is the output of this code?",
+        code: "fruits = ['apple', 'banana', 'mango']\nfruits[1] = 'orange'\nprint(fruits)",
+        options: [
+          "['orange', 'banana', 'mango']",
+          "['apple', 'orange', 'mango']",
+          "['apple', 'banana', 'orange']",
+          "Error"
+        ],
+        correctIndex: 1,
+        explanation: "Python lists are mutable, so an element can be replaced using its index. Index 1 contains 'banana', which is replaced with 'orange'."
+      }
+
+    ],
+  },
+  {
+    id: "q7", topicId: "t9", topicTitle: "Tuples", difficulty: "beginner", xpReward: 50,
+    timeLimit: 600, completed: false,
+    questions: [
+      { id: "qq20", text: "Which symbol is commonly used to create a tuple?", options: ["Square brackets []", "Curly braces {}", "Parentheses ()", "Angle brackets <>"], correctIndex: 2, explanation: "Parentheses are commonly used to define tuples." },
+      { id: "qq21", text: "Can you change an element of a tuple after creating it?", options: ["Yes, anytime", "No, tuples are immutable", "Only strings can change", "Only the last element"], correctIndex: 1, explanation: "Tuples are immutable, so their elements cannot be reassigned." },
+      { id: "qq22", text: "How do you create a tuple containing only the integer 5?", options: ["(5)", "[5]", "(5,)", "{5}"], correctIndex: 2, explanation: "A comma is needed to create a single-element tuple." },
+
+      {
+        id: "qq65",
+        text: "What is the output of this code?",
+        code: "numbers = (10, 20, 30, 40)\nprint(numbers[-1])",
+        options: ["10", "20", "30", "40"],
+        correctIndex: 3,
+        explanation: "Negative indexing starts from the end of a tuple. Index -1 returns the last element, which is 40."
+      },
+      {
+        id: "qq66",
+        text: "What happens when you try to modify an element of a tuple?",
+        code: "values = (10, 20, 30)\nvalues[1] = 50",
+        options: [
+          "The tuple becomes (10, 50, 30)",
+          "The tuple becomes a list",
+          "A TypeError occurs because tuples are immutable",
+          "The element is automatically ignored"
+        ],
+        correctIndex: 2,
+        explanation: "Tuples are immutable, meaning their elements cannot be changed after creation. Attempting to assign a new value to an element raises a TypeError."
+      }
+    ],
+  },
+  {
+    id: "q8", topicId: "t10", topicTitle: "Sets", difficulty: "beginner", xpReward: 50,
+    timeLimit: 600, completed: false,
+    questions: [
+      { id: "qq23", text: "What happens when duplicate values are added to a set?", options: ["All duplicates remain", "Duplicates are removed", "The program stops", "Values become a list"], correctIndex: 1, explanation: "Sets store unique elements." },
+      { id: "qq24", text: "Which operator calculates the union of two sets?", options: ["&", "|", "-", "%"], correctIndex: 1, explanation: "The | operator combines elements from both sets." },
+      { id: "qq25", text: "What does set.intersection(other) return?", options: ["All elements from both sets", "Elements only in the first set", "Elements common to both sets", "A sorted list"], correctIndex: 2, explanation: "Intersection returns elements shared by both sets." },
+
+      {
+        id: "qq67",
+        text: "What is the output of this code?",
+        code: "a = {1, 2, 3}\nb = {3, 4, 5}\nprint(a - b)",
+        options: ["{1, 2}", "{4, 5}", "{3}", "{1, 2, 3, 4, 5}"],
+        correctIndex: 0,
+        explanation: "The - operator performs set difference. It returns elements present in the first set but not in the second, so the result is {1, 2}."
+      },
+      {
+        id: "qq68",
+        text: "Which method adds a single element to an existing set?",
+        options: ["append()", "add()", "insert()", "extend()"],
+        correctIndex: 1,
+        explanation: "The add() method adds a single element to a set. Unlike lists, sets do not use append()."
+      }
+    ],
+  },
+  {
+    id: "q9", topicId: "t13", topicTitle: "Recursion", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq26", text: "What is the purpose of a base case in recursion?", options: ["To repeat forever", "To stop recursive calls", "To create a class", "To import a module"], correctIndex: 1, explanation: "A base case terminates recursion when the stopping condition is reached." },
+      { id: "qq27", text: "What is the output?", code: "def count(n):\n    if n == 0:\n        return 0\n    return 1 + count(n - 1)\nprint(count(3))", options: ["0", "2", "3", "4"], correctIndex: 2, explanation: "The function makes recursive calls until n reaches zero, counting three steps." },
+      { id: "qq28", text: "What can happen if recursion has no valid stopping condition?", options: ["Automatic sorting", "RecursionError", "The function becomes a list", "Nothing happens"], correctIndex: 1, explanation: "Unbounded recursive calls can exceed Python's recursion limit." },
+
+      {
+        id: "qq69",
+        text: "What is the output of this recursive function?",
+        code: "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(4))",
+        options: ["10", "16", "24", "120"],
+        correctIndex: 2,
+        explanation: "factorial(4) calculates 4 × 3 × 2 × 1, which equals 24. Each call reduces n until the base case n == 1 is reached."
+      },
+      {
+        id: "qq70",
+        text: "What is the purpose of the return statement in a recursive function?",
+        options: [
+          "To restart the program",
+          "To send a result back to the previous function call",
+          "To create a loop automatically",
+          "To import another function"
+        ],
+        correctIndex: 1,
+        explanation: "The return statement sends a value back to the calling function. Recursive calls use these returned values to build the final result."
+      }
+    ],
+  },
+  {
+    id: "q10", topicId: "t14", topicTitle: "Exception Handling", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq29", text: "Which block handles an exception in Python?", options: ["catch", "except", "error", "handle"], correctIndex: 1, explanation: "The except block handles matching exceptions raised in the try block." },
+      { id: "qq30", text: "Which exception occurs when dividing an integer by zero?", options: ["ValueError", "TypeError", "ZeroDivisionError", "IndexError"], correctIndex: 2, explanation: "Division by zero raises ZeroDivisionError." },
+      { id: "qq31", text: "When does a finally block normally execute?", options: ["Only when an exception occurs", "Only when no exception occurs", "Whether or not an exception occurs", "Only after a return statement in every situation"], correctIndex: 2, explanation: "A finally block normally executes whether an exception occurs or not." },
+
+      {
+        id: "qq71",
+        text: "What is the purpose of the else block in exception handling?",
+        code: "try:\n    result = 10 / 2\nexcept ZeroDivisionError:\n    print('Error')\nelse:\n    print('Success')",
+        options: [
+          "It executes only when an exception occurs",
+          "It executes when no exception occurs in the try block",
+          "It always executes, regardless of exceptions",
+          "It terminates the program"
+        ],
+        correctIndex: 1,
+        explanation: "The else block runs when the try block completes without raising an exception. Here, division succeeds, so 'Success' is printed."
+      },
+      {
+        id: "qq72",
+        text: "Which keyword is used to raise an exception manually in Python?",
+        options: ["throw", "error", "raise", "except"],
+        correctIndex: 2,
+        explanation: "The raise keyword allows a programmer to trigger an exception explicitly, for example: raise ValueError('Invalid input')."
+      }
+    ],
+  },
+  {
+    id: "q11", topicId: "t15", topicTitle: "File Handling", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq32", text: "Which mode opens a file for reading?", options: ["w", "a", "r", "x"], correctIndex: 2, explanation: "The r mode opens an existing file for reading." },
+      { id: "qq33", text: "What is an advantage of using the with statement to open a file?", options: ["It automatically closes the file", "It deletes the file", "It converts text to numbers", "It prevents all file errors"], correctIndex: 0, explanation: "The with statement manages the file context and closes it when the block exits." },
+      { id: "qq34", text: "Which method reads the contents of a file as a string?", options: ["read()", "write()", "append()", "closeAll()"], correctIndex: 0, explanation: "read() returns file contents as a string when reading a text file." },
+          {
+        id: "qq73",
+        text: "Which method writes a string to a file?",
+        options: ["read()", "write()", "readline()", "open()"],
+        correctIndex: 1,
+        explanation: "The write() method writes a string to a file."
+      },
+      {
+        id: "qq74",
+        text: "What does opening a file in 'a' mode do?",
+        options: [
+          "Reads the file only",
+          "Deletes the file contents",
+          "Appends data to the end of the file",
+          "Creates a read-only file"
+        ],
+        correctIndex: 2,
+        explanation: "Append mode ('a') adds new data to the end of a file without overwriting its existing contents."
+      },
+    ],
+  },
+  {
+    id: "q12", topicId: "t16", topicTitle: "Modules & Packages", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq35", text: "Which keyword imports a Python module?", options: ["include", "using", "import", "require"], correctIndex: 2, explanation: "Python uses import to load a module." },
+      { id: "qq36", text: "What does import math as m do?", options: ["Deletes math", "Creates the alias m for math", "Defines a function called m", "Installs a package"], correctIndex: 1, explanation: "The as keyword assigns an alias to the imported module." },
+      { id: "qq37", text: "Which function helps identify the module name or script entry point?", options: ["__name__", "main()", "module()", "package()"], correctIndex: 0, explanation: "__name__ is a module attribute, commonly checked against '__main__'." },
+          {
+        id: "qq75",
+        text: "Which statement imports only the sqrt function from the math module?",
+        options: [
+          "import sqrt",
+          "include math.sqrt",
+          "from math import sqrt",
+          "using math.sqrt"
+        ],
+        correctIndex: 2,
+        explanation: "The statement 'from math import sqrt' imports only the sqrt function from the math module."
+      },
+      {
+        id: "qq76",
+        text: "What is the main purpose of a Python package?",
+        options: [
+          "To store only variables",
+          "To organize related modules into a directory structure",
+          "To execute loops automatically",
+          "To replace Python functions"
+        ],
+        correctIndex: 1,
+        explanation: "A package organizes related Python modules into a directory structure, making code easier to manage and reuse."
+      },
+    ],
+  },
+  {
+    id: "q13", topicId: "t17", topicTitle: "Object-Oriented Programming", difficulty: "intermediate", xpReward: 100,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq38", text: "What is a class in Python?", options: ["A blueprint for creating objects", "A loop", "A file mode", "A package installer"], correctIndex: 0, explanation: "A class defines the attributes and methods that its objects can have." },
+      { id: "qq39", text: "What does self usually refer to in an instance method?", options: ["The parent class", "The current instance", "The module", "A global variable"], correctIndex: 1, explanation: "self refers to the instance on which the method is called." },
+      { id: "qq40", text: "Which method is commonly used to initialize a new object's attributes?", options: ["__start__", "__init__", "__create__", "__newobject__"], correctIndex: 1, explanation: "__init__ initializes an instance after it is created." },
+          {
+        id: "qq77",
+        text: "Which OOP concept allows a class to inherit properties and methods from another class?",
+        options: [
+          "Encapsulation",
+          "Inheritance",
+          "Polymorphism",
+          "Abstraction"
+        ],
+        correctIndex: 1,
+        explanation: "Inheritance allows a child class to reuse or extend the attributes and methods of a parent class."
+      },
+      {
+        id: "qq78",
+        text: "What is the purpose of encapsulation in Python?",
+        options: [
+          "To repeat code automatically",
+          "To organize code into modules",
+          "To bundle data and methods together and control access to them",
+          "To convert objects into strings"
+        ],
+        correctIndex: 2,
+        explanation: "Encapsulation bundles data and related methods within a class and helps control access to an object's internal state."
+      },
+    ],
+  },
+  {
+    id: "q14", topicId: "t18", topicTitle: "Iterators & Generators", difficulty: "intermediate", xpReward: 100,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq41", text: "Which keyword produces a value from a generator?", options: ["return", "yield", "send", "produce"], correctIndex: 1, explanation: "yield produces a value while preserving the generator's state." },
+      { id: "qq42", text: "What does iter([1, 2, 3]) return?", options: ["The number 3", "An iterator", "A dictionary", "A generator function definition"], correctIndex: 1, explanation: "iter() obtains an iterator from an iterable." },
+      { id: "qq43", text: "What happens when next() is called on an exhausted iterator?", options: ["It restarts automatically", "It returns None automatically", "It raises StopIteration", "It creates a new iterator"], correctIndex: 2, explanation: "An exhausted iterator signals completion by raising StopIteration." },
+          {
+        id: "qq79",
+        text: "Which built-in function is used to create an iterator from an iterable?",
+        options: [
+          "next()",
+          "iter()",
+          "yield()",
+          "range()"
+        ],
+        correctIndex: 1,
+        explanation: "The iter() function returns an iterator from an iterable object, such as a list or tuple."
+      },
+      {
+        id: "qq80",
+        text: "What is a key advantage of using generators in Python?",
+        options: [
+          "They always execute faster than lists",
+          "They store every value in memory at once",
+          "They produce values on demand, which can save memory",
+          "They can only generate integer values"
+        ],
+        correctIndex: 2,
+        explanation: "Generators produce values on demand instead of storing all values in memory at once, which can save memory."
+      },
+    ],
+  },
+  {
+    id: "q15", topicId: "t19", topicTitle: "Lambda Functions", difficulty: "intermediate", xpReward: 80,
+    timeLimit: 720, completed: false,
+    questions: [
+      { id: "qq44", text: "What does this expression return?", code: "(lambda x: x * 2)(4)", options: ["2", "4", "6", "8"], correctIndex: 3, explanation: "The lambda multiplies its argument, 4, by 2." },
+      { id: "qq45", text: "Which statement best describes a lambda function?", options: ["An anonymous function expression", "A class constructor only", "A loop keyword", "A file operation"], correctIndex: 0, explanation: "A lambda expression creates a small anonymous function." },
+      { id: "qq46", text: "What is the result?", code: "nums = [3, 1, 2]\nprint(sorted(nums, key=lambda x: -x))", options: ["[1, 2, 3]", "[3, 2, 1]", "[2, 1, 3]", "[3, 1, 2]"], correctIndex: 1, explanation: "The negative key sorts the numbers in descending order." },
+          {
+        id: "qq81",
+        text: "Which built-in function is commonly used to create an iterator from an iterable?",
+        options: [
+          "next()",
+          "iter()",
+          "yield()",
+          "range()"
+        ],
+        correctIndex: 1,
+        explanation: "The iter() function returns an iterator from an iterable object, such as a list or tuple."
+      },
+      {
+        id: "qq82",
+        text: "What is a key advantage of using generators in Python?",
+        options: [
+          "They always execute faster than lists",
+          "They store every value in memory at once",
+          "They produce values lazily, which can save memory",
+          "They can only generate integer values"
+        ],
+        correctIndex: 2,
+        explanation: "Generators produce values on demand instead of storing all values in memory at once, which can save memory."
+      },
+    ],
+  },
+{
+    id: "q16",
+    topicId: "t1",
+    topicTitle: "Python Introduction",
+    difficulty: "beginner",
+    xpReward: 50,
+    timeLimit: 600,
+    completed: false,
+    questions: [
+      {
+        id: "qq47",
+        text: "Who created Python?",
+        options: ["James Gosling", "Guido van Rossum", "Dennis Ritchie", "Bjarne Stroustrup"],
+        correctIndex: 1,
+        explanation: "Guido van Rossum created Python, which was first released in 1991."
+      },
+      {
+        id: "qq48",
+        text: "What is the output of print('Hello')?",
+        code: "print('Hello')",
+        options: ["'Hello'", "Hello", "print Hello", "Error"],
+        correctIndex: 1,
+        explanation: "The print() function displays Hello without quotation marks."
+      },
+      {
+        id: "qq49",
+        text: "Python is generally described as which type of language?",
+        options: ["High-level language", "Machine code only", "Markup language", "Database language"],
+        correctIndex: 0,
+        explanation: "Python is a high-level programming language."
+      }
+    ]
+  },
+  {
+    id: "q17",
+    topicId: "t2",
+    topicTitle: "Variables & Data Types",
+    difficulty: "beginner",
+    xpReward: 50,
+    timeLimit: 600,
+    completed: false,
+    questions: [
+      {
+        id: "qq50",
+        text: "What is the data type of 3.14?",
+        options: ["int", "str", "float", "bool"],
+        correctIndex: 2,
+        explanation: "Numbers containing a decimal point are generally represented as float."
+      },
+      {
+        id: "qq51",
+        text: "What is the output?",
+        code: "x = 10\nprint(type(x).__name__)",
+        options: ["float", "int", "str", "bool"],
+        correctIndex: 1,
+        explanation: "The value 10 is an integer, so its type name is int."
+      },
+      {
+        id: "qq52",
+        text: "Which value represents True or False?",
+        options: ["str", "float", "bool", "list"],
+        correctIndex: 2,
+        explanation: "The bool data type represents Boolean values True and False."
+      }
+    ]
+  },
+  {
+    id: "q18",
+    topicId: "t3",
+    topicTitle: "Operators",
+    difficulty: "beginner",
+    xpReward: 50,
+    timeLimit: 600,
+    completed: false,
+    questions: [
+      {
+        id: "qq53",
+        text: "What is the result of 10 // 3?",
+        code: "print(10 // 3)",
+        options: ["3.33", "3", "1", "0"],
+        correctIndex: 1,
+        explanation: "Floor division returns the quotient rounded down to an integer in this example."
+      },
+      {
+        id: "qq54",
+        text: "Which operator checks whether two values are equal?",
+        options: ["=", "==", "!=", ">="],
+        correctIndex: 1,
+        explanation: "The == operator compares two values for equality."
+      },
+      {
+        id: "qq55",
+        text: "What is the result of 2 ** 3?",
+        code: "print(2 ** 3)",
+        options: ["5", "6", "8", "9"],
+        correctIndex: 2,
+        explanation: "The ** operator performs exponentiation, so 2 to the power of 3 is 8."
+      }
+    ]
+  },
+  {
+    id: "q19",
+    topicId: "t4",
+    topicTitle: "Input & Output",
+    difficulty: "beginner",
+    xpReward: 50,
+    timeLimit: 600,
+    completed: false,
+    questions: [
+      {
+        id: "qq56",
+        text: "Which function displays output in Python?",
+        options: ["input()", "displayText()", "print()", "output()"],
+        correctIndex: 2,
+        explanation: "The print() function displays output."
+      },
+      {
+        id: "qq57",
+        text: "What data type does input() return by default?",
+        options: ["int", "float", "str", "bool"],
+        correctIndex: 2,
+        explanation: "input() returns the entered value as a string by default."
+      },
+      {
+        id: "qq58",
+        text: "Which function converts a numeric string to an integer?",
+        options: ["str()", "int()", "floatText()", "input()"],
+        correctIndex: 1,
+        explanation: "int() converts a valid numeric string, such as '25', into an integer."
+      }
+    ]
+  }
 ];
 
 export const CHALLENGES: Challenge[] = [
